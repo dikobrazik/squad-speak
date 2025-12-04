@@ -1,0 +1,59 @@
+name: Deploy All Services
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      - Build & Push Frontend
+      - Build & Push Backend
+      - Build & Push Nginx
+    types:
+      - completed
+
+concurrency:
+  group: deploy-all
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose
+        uses: appleboy/scp-action@master
+        with:
+            host: ${{ secrets.SSH_HOST }}
+            username: ${{ secrets.SSH_USERNAME }}
+            key: ${{ secrets.SSH_KEY }}
+            strip_components: 1
+            source: 'deploy/docker-compose.yaml'
+            target: '~/squad-speak/deploy'
+
+      - name: echo env file to remote server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "${{ secrets.ENV_DOCKER }}" > ~/squad-speak/deploy/.env
+            echo "${{ secrets.ENV_FRONTEND }}" > ~/squad-speak/deploy/frontend.env
+            echo "${{ secrets.ENV_BACKEND }}" > ~/squad-speak/deploy/backend.env
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd ~/squad-speak &&
+            docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io &&
+            docker compose -f deploy/docker-compose.yaml stop && 
+            docker compose -f deploy/docker-compose.yaml pull && 
+            docker compose -f deploy/docker-compose.yaml up -d &&
+            docker system prune -f
