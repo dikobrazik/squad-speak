@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+    nginx:
+        image: ghcr.io/dikobrazik/squad-speak-nginx:latest
+        container_name: modseccrs
+        environment:
+            MODSEC_AUDIT_LOG: /var/log/modsec/audit.log
+            MODSEC_DEBUG_LOG: /var/log/modsec/debug.log
+            SSL_CERT: /etc/letsencrypt/live/squadspeak.ru/fullchain.pem
+            SSL_CERT_KEY: /etc/letsencrypt/live/squadspeak.ru/privkey.pem
+            MANUAL_MODE: 1
+        ports:
+            - '80:8080'
+            - '443:8443'
+        volumes:
+            - /etc/letsencrypt/live/squadspeak.ru/fullchain.pem:/etc/letsencrypt/live/squadspeak.ru/fullchain.pem
+            - /etc/letsencrypt/live/squadspeak.ru/privkey.pem:/etc/letsencrypt/live/squadspeak.ru/privkey.pem
+            - /etc/letsencrypt/live/default/fullchain.pem:/etc/letsencrypt/live/default/fullchain.pem
+            - /etc/letsencrypt/live/default/privkey.pem:/etc/letsencrypt/live/default/privkey.pem
+            - shared-volume:/var/tmp/shared-docker
+            - ~/log/nginx:/var/log/nginx
+            - ~/log/modsec:/var/log/modsec
+        restart: always
+        depends_on:
+            - frontend
+
+    frontend:
+        image: ghcr.io/dikobrazik/squad-speak-frontend:latest
+        volumes:
+            - /tmp/.next/cache:/usr/app/.next/cache
+        restart: always
+
+    backend:
+        image: ghcr.io/dikobrazik/squad-speak-backend:latest
+        volumes:
+            - shared-volume:/var/tmp/shared-docker
+        restart: always
+
+volumes:
+    shared-volume:
+    next-images:
