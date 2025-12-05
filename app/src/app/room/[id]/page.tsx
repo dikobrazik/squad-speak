@@ -67,7 +67,7 @@ export default function RoomPage() {
 
 	return (
 		<div className="flex flex-col min-h-screen items-center justify-center">
-			<video ref={localVideoRef} autoPlay playsInline controls muted></video>
+			<video ref={localVideoRef} autoPlay playsInline muted></video>
 			<video ref={remoteVideoRef} autoPlay playsInline controls muted></video>
 			Hello from Squad Speak!
 		</div>

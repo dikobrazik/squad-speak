@@ -38,7 +38,7 @@ jobs:
 
       - name: 'Create env file'
         run: |
-          echo "${{ secrets.ENV_BACKEND }}" > .env
+          echo "${{ secrets.ENV_BACKEND }}" > ./server/.env
           # echo "${{ secrets.DB_CA }}" > db.pem
 
       - name: Login to Dockerhub
