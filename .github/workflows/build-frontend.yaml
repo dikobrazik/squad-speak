@@ -1,4 +1,4 @@
-name: Frontend deployment
+name: Build & Push Frontend
 
 on:
     push:
@@ -43,24 +43,3 @@ jobs:
                   file: ./app/deploy/Dockerfile
                   push: true
                   tags: ${{ env.FRONTEND_IMAGE }}
-
-    update-yc:
-        needs: [build-frontend]
-        runs-on: ubuntu-latest
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v4
-
-            - name: executing remote ssh commands using password
-              uses: appleboy/ssh-action@v1.0.0
-              with:
-                  host: ${{ secrets.SSH_HOST }}
-                  username: ${{ secrets.SSH_USERNAME }}
-                  key: ${{ secrets.SSH_KEY }}
-                  script: |
-                      cd ~/squad-speak && 
-                      docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io &&
-                      docker compose -f deploy/docker-compose.yaml stop frontend && 
-                      docker compose -f deploy/docker-compose.yaml pull frontend && 
-                      docker compose -f deploy/docker-compose.yaml up -d frontend &&
-                      docker system prune -f

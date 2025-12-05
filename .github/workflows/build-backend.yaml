@@ -1,4 +1,4 @@
-name: Backend deployment
+name: Build & Push Backend
 
 on:
   push:
@@ -58,24 +58,3 @@ jobs:
           file: ./server/deploy/Dockerfile
           push: true
           tags: ${{ env.BACKEND_IMAGE }}
-
-  update-yc:
-    needs: build-backend
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd ~/squad-speak &&
-            docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io &&
-            docker compose -f deploy/docker-compose.yaml stop backend && 
-            docker compose -f deploy/docker-compose.yaml pull backend && 
-            docker compose -f deploy/docker-compose.yaml up -d backend &&
-            docker system prune -f

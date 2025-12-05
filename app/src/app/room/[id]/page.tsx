@@ -37,6 +37,13 @@ export default function RoomPage() {
 			}
 		});
 
+		// signaling.on("connected", async () => {
+		// 	const offer = await pc.createOffer();
+		// 	await pc.setLocalDescription(offer);
+
+		// 	signaling.emit("offer", { offer });
+		// });
+
 		pc.onicecandidate = (event) => {
 			if (event.candidate) {
 				console.log("event candidate", event.candidate);
@@ -58,11 +65,6 @@ export default function RoomPage() {
 				pc.addTrack(track, stream);
 			});
 			localVideoRef.current!.srcObject = stream;
-
-			const offer = await pc.createOffer();
-			await pc.setLocalDescription(offer);
-
-			signaling.emit("offer", { offer });
 		})();
 	}, []);
 

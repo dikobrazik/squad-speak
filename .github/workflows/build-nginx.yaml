@@ -1,4 +1,4 @@
-name: Nginx deployment
+name: Build & Push Nginx
 
 on:
     push:
