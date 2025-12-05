@@ -6,7 +6,14 @@ import {
 } from '@nestjs/websockets';
 import type { Server } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway(808, {
+  cors: {
+    origin: ['http://localhost:3000', 'https://squadspeak.ru'],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
+  transports: ['websocket', 'polling'],
+})
 export class EventsGateway {
   @WebSocketServer() server: Server;
 

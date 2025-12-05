@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import io from "socket.io-client";
+import { WS_BASE_URL } from "@/src/config";
 
 export default function RoomPage() {
 	const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -12,7 +13,7 @@ export default function RoomPage() {
 			iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
 		});
 
-		const signaling = io(`ws://localhost`, {
+		const signaling = io(WS_BASE_URL, {
 			transports: ["websocket"],
 		});
 
@@ -67,7 +68,7 @@ export default function RoomPage() {
 
 	return (
 		<div className="flex flex-col min-h-screen items-center justify-center">
-			<video ref={localVideoRef} autoPlay playsInline muted></video>
+			<video ref={localVideoRef} autoPlay playsInline controls muted></video>
 			<video ref={remoteVideoRef} autoPlay playsInline controls muted></video>
 			Hello from Squad Speak!
 		</div>

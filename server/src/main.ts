@@ -12,7 +12,7 @@ async function bootstrap() {
   app.enableCors({
     origin: isDev
       ? ['http://localhost:3000', 'http://192.168.31.146:3000']
-      : ['https://squadspeak.ru'],
+      : ['https://squadspeak.ru', 'http://localhost:3000'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
     // allowedHeaders: ['Authorization', 'Content-Type', 'Accept', 'Cookie'],
