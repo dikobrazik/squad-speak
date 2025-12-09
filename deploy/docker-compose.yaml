@@ -22,6 +22,8 @@ services:
             - ~/log/nginx:/var/log/nginx
             - ~/log/modsec:/var/log/modsec
         restart: always
+        networks:
+            - public
         depends_on:
             - frontend
             - backend
