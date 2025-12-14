@@ -26,7 +26,7 @@ export const usePeerConnection = ({
   const localVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    getTurnServers().then(pc.setConfiguration);
+    getTurnServers().then((response) => pc.setConfiguration(response));
   }, []);
 
   useEffect(() => {
