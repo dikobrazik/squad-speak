@@ -1,3 +1,6 @@
+import { Injectable, Scope } from '@nestjs/common';
+
+@Injectable({ scope: Scope.TRANSIENT })
 export class RoomsService {
   private roomsMap: Record<string, { users: Record<string, boolean> }> = {};
 

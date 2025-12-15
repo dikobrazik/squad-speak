@@ -7,13 +7,19 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import {
-  SingleRoomClientToServerEvents,
-  SingleRoomServerToClientEvents,
-} from 'shared/types/websockets/single-room';
+  MultiRoomClientToServerEvents,
+  MultiRoomServerToClientEvents,
+} from 'shared/types/websockets/multi-room';
 import type { Server, Socket } from 'socket.io';
 import { RoomsService } from './rooms.service';
 
+type Client = Socket<
+  MultiRoomClientToServerEvents,
+  MultiRoomServerToClientEvents
+>;
+
 @WebSocketGateway(808, {
+  namespace: 'multiuser',
   cors: {
     origin: ['http://localhost:3000', 'https://squadspeak.ru'],
     methods: ['GET', 'POST'],
@@ -21,92 +27,67 @@ import { RoomsService } from './rooms.service';
   },
   transports: ['websocket', 'polling'],
 })
-export class EventsGateway {
+export class MultiUserEventsGateway {
   @Inject(RoomsService)
   private roomsService: RoomsService;
 
   @WebSocketServer() server: Server<
-    SingleRoomClientToServerEvents,
-    SingleRoomServerToClientEvents
+    MultiRoomClientToServerEvents,
+    MultiRoomServerToClientEvents
   >;
 
-  handleConnection(
-    @ConnectedSocket() client: Socket<
-      SingleRoomClientToServerEvents,
-      SingleRoomServerToClientEvents
-    >,
-  ) {
+  handleConnection(@ConnectedSocket() client: Client) {
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
 
     const usersInRoom = this.roomsService.getUsersCount(roomId);
 
-    switch (usersInRoom) {
-      case 0:
-        break;
-      case 1:
-        client.broadcast.emit('start-call');
-        break;
-      default:
-        client.emit('room-full');
-        client.disconnect();
-        return;
+    if (usersInRoom > 0) {
+      client.emit('start-call', [...this.roomsService.getRoomUsersIds(roomId)]);
     }
 
     this.roomsService.addUserToRoom(roomId, userId);
+    this.server.to(roomId).emit('connected', { userId });
     client.join(roomId);
     this.notifyRoomStatus(roomId);
   }
 
-  handleDisconnect(
-    @ConnectedSocket() client: Socket<
-      SingleRoomClientToServerEvents,
-      SingleRoomServerToClientEvents
-    >,
-  ) {
+  handleDisconnect(@ConnectedSocket() client: Client) {
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
 
     this.roomsService.removeUserFromRoom(roomId, userId);
+    this.server.to(roomId).emit('disconnected', { userId });
     client.leave(roomId);
     this.notifyRoomStatus(roomId);
   }
 
   @SubscribeMessage('offer')
   handleOffer(
-    @MessageBody() data: Parameters<SingleRoomClientToServerEvents['offer']>[0],
-    @ConnectedSocket() client: Socket<
-      SingleRoomClientToServerEvents,
-      SingleRoomServerToClientEvents
-    >,
+    @MessageBody() data: Parameters<MultiRoomClientToServerEvents['offer']>[0],
+    @ConnectedSocket() client: Client,
   ): void {
-    client.broadcast.emit('offer', data);
+    client.to(String(client.handshake.query.roomId)).emit('offer', data);
   }
 
   @SubscribeMessage('answer')
   handleAnswer(
-    @MessageBody() data: Parameters<
-      SingleRoomClientToServerEvents['answer']
-    >[0],
-    @ConnectedSocket() client: Socket<
-      SingleRoomClientToServerEvents,
-      SingleRoomServerToClientEvents
-    >,
+    @MessageBody() data: Parameters<MultiRoomClientToServerEvents['answer']>[0],
+    @ConnectedSocket() client: Client,
   ): void {
-    client.broadcast.emit('answer', data);
+    client.to(String(client.handshake.query.roomId)).emit('answer', data);
   }
 
   @SubscribeMessage('ice-candidate')
   handleIceCandidate(
     @MessageBody() data: Parameters<
-      SingleRoomClientToServerEvents['ice-candidate']
+      MultiRoomClientToServerEvents['ice-candidate']
     >[0],
-    @ConnectedSocket() client: Socket<
-      SingleRoomClientToServerEvents,
-      SingleRoomServerToClientEvents
-    >,
+    @ConnectedSocket() client: Client,
   ): void {
-    client.broadcast.emit('ice-candidate', data);
+    client
+      .to(String(client.handshake.query.roomId))
+      .emit('ice-candidate', data);
   }
 
   // @Interval(1000)

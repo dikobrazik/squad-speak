@@ -7,13 +7,13 @@ import { io, type Socket } from "socket.io-client";
 import { WS_BASE_URL } from "@/src/config";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
 
-export const useSocketIO = (roomId: string) => {
+export const useSocketIO = (roomId: string, namespace?: string) => {
   const { userId } = useAuthContext();
 
   const [socket] = useState(
     () =>
-      io(WS_BASE_URL, {
-        // autoConnect: false,
+      io(new URL(namespace ?? "/", WS_BASE_URL).toString(), {
+        autoConnect: false,
         transports: ["websocket"],
         query: {
           roomId,

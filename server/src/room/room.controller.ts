@@ -1,18 +1,18 @@
-import { Controller, Get, Inject, Post } from "@nestjs/common";
-import { RoomService } from "./room.service";
+import { Controller, Get, Inject, Post } from '@nestjs/common';
+import { RoomService } from './room.service';
 
-@Controller("room")
+@Controller('room')
 export class RoomController {
-	@Inject(RoomService)
-	private readonly roomService: RoomService;
+  @Inject(RoomService)
+  private readonly roomService: RoomService;
 
-	@Post()
-	createRoom() {
-		return this.roomService.createRoom("New Room");
-	}
+  @Post()
+  createRoom() {
+    return this.roomService.createRoom('New Room');
+  }
 
-	@Get()
-	getRooms() {
-		return this.roomService.getRooms();
-	}
+  @Get()
+  getRooms() {
+    return this.roomService.getRooms();
+  }
 }

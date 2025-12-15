@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
+import { toast } from "react-toastify";
 import type {
   SingleRoomClientToServerEvents,
   SingleRoomServerToClientEvents,
@@ -42,24 +43,31 @@ export const usePeerConnection = ({
 
   useEffect(() => {
     websocket.on("offer", async ({ description }) => {
-      if (!description) return null;
+      try {
+        if (!description) return null;
 
-      if (
-        pc.signalingState !== "stable" &&
-        pc.signalingState !== "have-remote-offer"
-      ) {
-        console.warn(
-          "Signaling state is not stable, ignoring offer",
-          pc.signalingState,
-        );
-        return;
+        if (
+          pc.signalingState !== "stable" &&
+          pc.signalingState !== "have-remote-offer"
+        ) {
+          console.warn(
+            "Signaling state is not stable, ignoring offer",
+            pc.signalingState,
+          );
+          return;
+        }
+
+        await pc.setRemoteDescription(description);
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+
+        websocket.emit("answer", { description: pc.localDescription });
+      } catch (error) {
+        console.error("Error handling offer:", error);
+        toast(`Error handling offer, ${JSON.stringify(error)}`, {
+          type: "error",
+        });
       }
-
-      await pc.setRemoteDescription(description);
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
-
-      websocket.emit("answer", { description: pc.localDescription });
     });
 
     websocket.on("answer", async ({ description }) => {
@@ -69,6 +77,9 @@ export const usePeerConnection = ({
         await pc.setRemoteDescription(description);
       } else {
         console.warn("Wrong signaling state for answer", pc.signalingState);
+        toast(`Wrong signaling state for answer, ${pc.signalingState}`, {
+          type: "error",
+        });
       }
     });
 
@@ -77,6 +88,9 @@ export const usePeerConnection = ({
         await pc.addIceCandidate(candidate);
       } catch (err) {
         console.error(err);
+        toast(`Error adding ICE candidate, ${JSON.stringify(err)}`, {
+          type: "error",
+        });
       }
     });
 
@@ -88,10 +102,13 @@ export const usePeerConnection = ({
   useEffect(() => {
     pc.ontrack = ({ track, streams }) => {
       track.onunmute = () => {
-        if (remoteVideoRef.current!.srcObject) {
+        if (!remoteVideoRef.current) return;
+
+        if (remoteVideoRef.current.srcObject) {
           return;
         }
-        remoteVideoRef.current!.srcObject = streams[0];
+
+        remoteVideoRef.current.srcObject = streams[0];
       };
     };
 
@@ -111,6 +128,8 @@ export const usePeerConnection = ({
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
+
+      websocket.connect();
     })();
   }, []);
 

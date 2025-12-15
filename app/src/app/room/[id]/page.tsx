@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useSocketIO } from "@/src/app/room/[id]/hooks/useSocketIO";
+import { useMultiPeerConnection } from "./hooks/useMultiPeerConnection";
 import { usePeerConnection } from "./hooks/usePeerConnection";
 import { useRoom } from "./hooks/useRoom";
 
@@ -9,10 +10,15 @@ export default function RoomPage() {
   const roomId = String(useParams().id);
 
   const websocket = useSocketIO(roomId);
+  const websocketMulti = useSocketIO(roomId, "/multi-user");
   const { usersCount } = useRoom({ websocket });
 
   const { remoteVideoRef, onCallClick } = usePeerConnection({
     websocket,
+  });
+
+  const {} = useMultiPeerConnection({
+    websocket: websocketMulti,
   });
 
   return (
