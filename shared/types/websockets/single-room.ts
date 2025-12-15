@@ -13,6 +13,8 @@ export type SingleRoomClientToServerEvents = {
 };
 
 export type SingleRoomServerToClientEvents = {
+	"room-full": () => void;
+	"start-call": () => void;
 	"room-status": (payload: { usersCount: number }) => void;
 
 	offer: (...args: Parameters<SingleRoomClientToServerEvents["offer"]>) => void;

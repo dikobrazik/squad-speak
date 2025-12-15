@@ -29,6 +29,17 @@ export const usePeerConnection = ({
     getTurnServers().then((response) => pc.setConfiguration(response));
   }, []);
 
+  const onCallClick = async () => {
+    try {
+      const offer = await pc.createOffer();
+      await pc.setLocalDescription(offer);
+
+      websocket.emit("offer", { description: pc.localDescription });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     websocket.on("offer", async ({ description }) => {
       if (!description) return null;
@@ -68,6 +79,10 @@ export const usePeerConnection = ({
         console.error(err);
       }
     });
+
+    websocket.on("start-call", () => {
+      onCallClick();
+    });
   }, []);
 
   useEffect(() => {
@@ -98,17 +113,6 @@ export const usePeerConnection = ({
       }
     })();
   }, []);
-
-  const onCallClick = async () => {
-    try {
-      const offer = await pc.createOffer();
-      await pc.setLocalDescription(offer);
-
-      websocket.emit("offer", { description: pc.localDescription });
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
   return { localVideoRef, remoteVideoRef, onCallClick };
 };

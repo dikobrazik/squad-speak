@@ -7,9 +7,9 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import {
-  ClientToServerEvents,
-  ServerToClientEvents,
-} from 'shared/types/websockets';
+  SingleRoomClientToServerEvents,
+  SingleRoomServerToClientEvents,
+} from 'shared/types/websockets/single-room';
 import type { Server, Socket } from 'socket.io';
 import { RoomsService } from './rooms.service';
 
@@ -25,42 +25,61 @@ export class EventsGateway {
   @Inject(RoomsService)
   private roomsService: RoomsService;
 
-  @WebSocketServer() server: Server<ClientToServerEvents, ServerToClientEvents>;
+  @WebSocketServer() server: Server<
+    SingleRoomClientToServerEvents,
+    SingleRoomServerToClientEvents
+  >;
 
   handleConnection(
     @ConnectedSocket() client: Socket<
-      ClientToServerEvents,
-      ServerToClientEvents
+      SingleRoomClientToServerEvents,
+      SingleRoomServerToClientEvents
     >,
   ) {
+    console.log(client);
+
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
 
+    const usersInRoom = this.roomsService.getUsersCount(roomId);
+
+    switch (usersInRoom) {
+      case 0:
+        break;
+      case 1:
+        client.broadcast.emit('start-call');
+        break;
+      default:
+        client.emit('room-full');
+        client.disconnect();
+        return;
+    }
+
     this.roomsService.addUserToRoom(roomId, userId);
-    this.notifyRoomStatus(roomId);
     client.join(roomId);
+    this.notifyRoomStatus(roomId);
   }
 
   handleDisconnect(
     @ConnectedSocket() client: Socket<
-      ClientToServerEvents,
-      ServerToClientEvents
+      SingleRoomClientToServerEvents,
+      SingleRoomServerToClientEvents
     >,
   ) {
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
 
     this.roomsService.removeUserFromRoom(roomId, userId);
-    this.notifyRoomStatus(roomId);
     client.leave(roomId);
+    this.notifyRoomStatus(roomId);
   }
 
   @SubscribeMessage('offer')
   handleOffer(
-    @MessageBody() data: Parameters<ClientToServerEvents['offer']>[0],
+    @MessageBody() data: Parameters<SingleRoomClientToServerEvents['offer']>[0],
     @ConnectedSocket() client: Socket<
-      ClientToServerEvents,
-      ServerToClientEvents
+      SingleRoomClientToServerEvents,
+      SingleRoomServerToClientEvents
     >,
   ): void {
     client.broadcast.emit('offer', data);
@@ -68,10 +87,12 @@ export class EventsGateway {
 
   @SubscribeMessage('answer')
   handleAnswer(
-    @MessageBody() data: Parameters<ClientToServerEvents['answer']>[0],
+    @MessageBody() data: Parameters<
+      SingleRoomClientToServerEvents['answer']
+    >[0],
     @ConnectedSocket() client: Socket<
-      ClientToServerEvents,
-      ServerToClientEvents
+      SingleRoomClientToServerEvents,
+      SingleRoomServerToClientEvents
     >,
   ): void {
     client.broadcast.emit('answer', data);
@@ -79,10 +100,12 @@ export class EventsGateway {
 
   @SubscribeMessage('ice-candidate')
   handleIceCandidate(
-    @MessageBody() data: Parameters<ClientToServerEvents['ice-candidate']>[0],
+    @MessageBody() data: Parameters<
+      SingleRoomClientToServerEvents['ice-candidate']
+    >[0],
     @ConnectedSocket() client: Socket<
-      ClientToServerEvents,
-      ServerToClientEvents
+      SingleRoomClientToServerEvents,
+      SingleRoomServerToClientEvents
     >,
   ): void {
     client.broadcast.emit('ice-candidate', data);
