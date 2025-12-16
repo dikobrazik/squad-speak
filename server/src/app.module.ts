@@ -11,6 +11,7 @@ import { EventsModule } from './events/events.module';
 import { RoomModule } from './room/room.module';
 import { UserModule } from './user/user.module';
 import { TurnModule } from './turn/turn.module';
+import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { TurnModule } from './turn/turn.module';
     AuthorizationModule,
     UserModule,
     TurnModule,
+    TelegramModule,
   ],
   controllers: [AppController],
   providers: [AppService],
