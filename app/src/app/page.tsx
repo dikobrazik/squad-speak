@@ -35,7 +35,7 @@ export default function Home() {
         </button>
         <ul>
           {data?.map((room) => (
-            <Link key={room.id} href={`/room2/${room.id}`}>
+            <Link key={room.id} href={`/room/${room.id}`}>
               <li key={room.id} className="mb-2 p-2 border rounded">
                 <p>Room ID: {room.id}</p>
                 <p>Room Name: {room.name}</p>

@@ -11,7 +11,8 @@ import {
   MultiRoomServerToClientEvents,
 } from 'shared/types/websockets/multi-room';
 import type { Server, Socket } from 'socket.io';
-import { RoomsService } from './rooms.service';
+import { RoomService } from 'src/room/room.service';
+import { RoomStateService } from './rooms.service';
 
 type Client = Socket<
   MultiRoomClientToServerEvents,
@@ -28,25 +29,36 @@ type Client = Socket<
   transports: ['websocket', 'polling'],
 })
 export class MultiUserEventsGateway {
-  @Inject(RoomsService)
-  private roomsService: RoomsService;
+  @Inject(RoomStateService)
+  private roomStateService: RoomStateService;
+
+  @Inject(RoomService)
+  private roomService: RoomService;
 
   @WebSocketServer() server: Server<
     MultiRoomClientToServerEvents,
     MultiRoomServerToClientEvents
   >;
 
-  handleConnection(@ConnectedSocket() client: Client) {
+  async handleConnection(@ConnectedSocket() client: Client) {
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
 
-    const usersInRoom = this.roomsService.getUsersCount(roomId);
-
-    if (usersInRoom > 0) {
-      client.emit('start-call', [...this.roomsService.getRoomUsersIds(roomId)]);
+    if ((await this.roomService.getRoom(roomId)) === null) {
+      client.emit('room-not-found');
+      client.disconnect();
+      return;
     }
 
-    this.roomsService.addUserToRoom(roomId, userId);
+    const usersInRoom = this.roomStateService.getUsersCount(roomId);
+
+    if (usersInRoom > 0) {
+      client.emit('start-call', [
+        ...this.roomStateService.getRoomUsersIds(roomId),
+      ]);
+    }
+
+    this.roomStateService.addUserToRoom(roomId, userId);
     this.server.to(roomId).emit('connected', { userId });
     client.join(roomId);
     this.notifyRoomStatus(roomId);
@@ -56,7 +68,7 @@ export class MultiUserEventsGateway {
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
 
-    this.roomsService.removeUserFromRoom(roomId, userId);
+    this.roomStateService.removeUserFromRoom(roomId, userId);
     this.server.to(roomId).emit('disconnected', { userId });
     client.leave(roomId);
     this.notifyRoomStatus(roomId);
@@ -98,7 +110,7 @@ export class MultiUserEventsGateway {
   // }
 
   notifyRoomStatus(roomId: string) {
-    const roomUsersCount = this.roomsService.getUsersCount(roomId);
+    const roomUsersCount = this.roomStateService.getUsersCount(roomId);
     this.server.in(roomId).emit('room-status', { usersCount: roomUsersCount });
   }
 }

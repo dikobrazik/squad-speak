@@ -14,6 +14,7 @@ export type SingleRoomClientToServerEvents = {
 
 export type SingleRoomServerToClientEvents = {
 	"room-full": () => void;
+	"room-not-found": () => void;
 	"start-call": () => void;
 	"room-status": (payload: { usersCount: number }) => void;
 

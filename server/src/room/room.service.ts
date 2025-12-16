@@ -13,6 +13,10 @@ export class RoomService {
     return this.roomRepository.save(room);
   }
 
+  getRoom(roomId: string): Promise<Room | null> {
+    return this.roomRepository.findOne({ where: { id: roomId } });
+  }
+
   getRooms(): Promise<Room[]> {
     return this.roomRepository.find();
   }

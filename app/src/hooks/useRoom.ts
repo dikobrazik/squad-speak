@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-toastify/unstyled";
 import type {
   SingleRoomClientToServerEvents,
   SingleRoomServerToClientEvents,
@@ -21,6 +21,11 @@ export const useRoom = ({
   useEffect(() => {
     websocket.on("room-status", (payload) => {
       setUsersCount(payload.usersCount);
+    });
+
+    websocket.on("room-full", () => {
+      toast("Room is full. Redirecting to home page.", { type: "error" });
+      router.push("/");
     });
   }, []);
 

@@ -11,7 +11,8 @@ import {
   SingleRoomServerToClientEvents,
 } from 'shared/types/websockets/single-room';
 import type { Server, Socket } from 'socket.io';
-import { RoomsService } from './rooms.service';
+import { RoomService } from 'src/room/room.service';
+import { RoomStateService } from './rooms.service';
 
 @WebSocketGateway(808, {
   cors: {
@@ -22,15 +23,18 @@ import { RoomsService } from './rooms.service';
   transports: ['websocket', 'polling'],
 })
 export class EventsGateway {
-  @Inject(RoomsService)
-  private roomsService: RoomsService;
+  @Inject(RoomStateService)
+  private roomStateService: RoomStateService;
+
+  @Inject(RoomService)
+  private roomService: RoomService;
 
   @WebSocketServer() server: Server<
     SingleRoomClientToServerEvents,
     SingleRoomServerToClientEvents
   >;
 
-  handleConnection(
+  async handleConnection(
     @ConnectedSocket() client: Socket<
       SingleRoomClientToServerEvents,
       SingleRoomServerToClientEvents
@@ -39,7 +43,13 @@ export class EventsGateway {
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
 
-    const usersInRoom = this.roomsService.getUsersCount(roomId);
+    if ((await this.roomService.getRoom(roomId)) === null) {
+      client.emit('room-not-found');
+      client.disconnect();
+      return;
+    }
+
+    const usersInRoom = this.roomStateService.getUsersCount(roomId);
 
     switch (usersInRoom) {
       case 0:
@@ -53,7 +63,7 @@ export class EventsGateway {
         return;
     }
 
-    this.roomsService.addUserToRoom(roomId, userId);
+    this.roomStateService.addUserToRoom(roomId, userId);
     client.join(roomId);
     this.notifyRoomStatus(roomId);
   }
@@ -67,7 +77,7 @@ export class EventsGateway {
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
 
-    this.roomsService.removeUserFromRoom(roomId, userId);
+    this.roomStateService.removeUserFromRoom(roomId, userId);
     client.leave(roomId);
     this.notifyRoomStatus(roomId);
   }
@@ -117,7 +127,7 @@ export class EventsGateway {
   // }
 
   notifyRoomStatus(roomId: string) {
-    const roomUsersCount = this.roomsService.getUsersCount(roomId);
+    const roomUsersCount = this.roomStateService.getUsersCount(roomId);
     this.server.in(roomId).emit('room-status', { usersCount: roomUsersCount });
   }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from "react";
-import { toast } from "react-toastify";
+import { toast } from "react-toastify/unstyled";
 import type {
   SingleRoomClientToServerEvents,
   SingleRoomServerToClientEvents,
