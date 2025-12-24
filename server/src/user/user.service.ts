@@ -9,11 +9,17 @@ export class UserService {
   private readonly userRepository: Repository<User>;
 
   public createGuestAccount(): Promise<User> {
-    const guestUser = this.userRepository.create({
-      // Set default properties for a guest user
-      // username: `guest_${Date.now()}`,
-      // isGuest: true,
-    });
+    const guestUser = this.userRepository.create({});
     return this.userRepository.save(guestUser);
+  }
+
+  public createUser(): Promise<User> {
+    const user = this.userRepository.create({});
+
+    return this.userRepository.save(user);
+  }
+
+  public getUser(userId: string): Promise<User | null> {
+    return this.userRepository.findOneBy({ id: userId });
   }
 }

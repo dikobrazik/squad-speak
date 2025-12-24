@@ -3,6 +3,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TelegramService } from './telegram/telegram.service';
 
+import cookieParser = require('cookie-parser');
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -20,6 +22,8 @@ async function bootstrap() {
   app.setGlobalPrefix('api', {
     exclude: [],
   });
+
+  app.use(cookieParser());
 
   app.use(await app.get(TelegramService).createBot());
 
