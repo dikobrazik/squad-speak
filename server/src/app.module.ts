@@ -14,6 +14,7 @@ import { User } from './entities/User';
 import { EventsModule } from './events/events.module';
 import { RoomModule } from './room/room.module';
 import { TelegramModule } from './telegram/telegram.module';
+import { TelegramAuthSessionService } from './telegram/telegram-auth-session.service';
 import { TurnModule } from './turn/turn.module';
 import { UserModule } from './user/user.module';
 
@@ -54,6 +55,7 @@ import { UserModule } from './user/user.module';
       provide: APP_GUARD,
       useClass: JwtAuthGuard, // Используем кастомный Guard
     },
+    TelegramAuthSessionService,
   ],
 })
 export class AppModule {}

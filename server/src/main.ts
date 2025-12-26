@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { TelegramService } from './telegram/telegram.service';
+import { TelegramBotService } from './telegram/bot/telegram-bot.service';
 
 import cookieParser = require('cookie-parser');
 
@@ -26,7 +26,7 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  app.use(await app.get(TelegramService).createBot());
+  app.use(await app.get(TelegramBotService).createBot());
 
   await app.listen(80);
 }

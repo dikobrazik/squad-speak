@@ -16,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { interval, map, Observable } from 'rxjs';
 import { SessionStatus } from 'shared/types/session';
+import { TelegramAuthSessionService } from 'src/telegram/telegram-auth-session.service';
 import { UserService } from 'src/user/user.service';
 import { AuthorizationService } from './authorization.service';
 import { Public } from './decorators/public.decorator';
@@ -36,6 +37,8 @@ export class AuthorizationController {
   private readonly authService: AuthorizationService;
   @Inject(ConfigService)
   private readonly configService: ConfigService;
+  @Inject(TelegramAuthSessionService)
+  private readonly telegramAuthSessionService: TelegramAuthSessionService;
 
   @Post('guest')
   async createGuestAccount() {
@@ -45,7 +48,7 @@ export class AuthorizationController {
 
   @Get('qr')
   createQr() {
-    const sessionId = this.authService.createSession();
+    const sessionId = this.telegramAuthSessionService.createSession();
     const botUsername = this.configService.getOrThrow<string>(
       'TELEGRAM_BOT_USERNAME',
     );
@@ -60,7 +63,7 @@ export class AuthorizationController {
   getStatus(@Param('id') id: string): Observable<MessageEvent> {
     return interval(1000).pipe(
       map(() => {
-        const session = this.authService.getSession(id);
+        const session = this.telegramAuthSessionService.getSession(id);
 
         if (!session) {
           return { status: SessionStatus.EXPIRED };
@@ -85,7 +88,8 @@ export class AuthorizationController {
     @Param('id') id: string,
     @Res({ passthrough: true }) response: Response,
   ) {
-    const session = this.authService.getSession(id);
+    const session = this.telegramAuthSessionService.getSession(id);
+
     if (!session) {
       return new NotFoundException();
     }
@@ -96,7 +100,10 @@ export class AuthorizationController {
 
     const [accessToken, refreshToken] = await Promise.all([
       this.authService.generateJwtToken(session.userId),
-      this.authService.generateJwtToken(session.userId, '7d'),
+      this.authService.generateJwtToken(
+        session.userId,
+        session.rememberMe ? '30d' : '2min',
+      ),
     ]);
 
     response.cookie('refreshToken', refreshToken, SECURE_COOKIE_OPTIONS);

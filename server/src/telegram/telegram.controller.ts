@@ -1,8 +1,8 @@
 import { HttpService } from '@nestjs/axios';
 import { Controller, Get, Inject, Param, Res } from '@nestjs/common';
-import axios from 'axios';
 import type { Response } from 'express';
 import { Public } from 'src/authorization/decorators/public.decorator';
+import { TelegramBotService } from './bot/telegram-bot.service';
 import { TelegramService } from './telegram.service';
 
 @Controller('telegram')
@@ -11,6 +11,8 @@ export class TelegramController {
   private readonly httpService: HttpService;
   @Inject(TelegramService)
   private readonly telegramService: TelegramService;
+  @Inject(TelegramBotService)
+  private readonly telegramBotService: TelegramBotService;
 
   @Get('profile/:id')
   getProfile(@Param('id') id: string) {
@@ -26,7 +28,7 @@ export class TelegramController {
       return;
     }
 
-    const photoUrl = await this.telegramService.getProfilePhoto(
+    const photoUrl = await this.telegramBotService.getProfilePhoto(
       Number(telegramAccount.id),
     );
 
@@ -38,11 +40,5 @@ export class TelegramController {
         res.status(500).send('Error fetching photo');
       },
     });
-
-    // Alternative using axios:
-    // const response = await axios.get(photoUrl, { responseType: 'stream' });
-    // response.data.pipe(res);
-
-    // res.redirect(photoUrl);
   }
 }
