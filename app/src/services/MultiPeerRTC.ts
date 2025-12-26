@@ -1,4 +1,4 @@
-import { toast } from "react-toastify/unstyled";
+import { addToast } from "@heroui/toast";
 import { getTurnServers } from "../api";
 
 type UserId = string;
@@ -21,7 +21,7 @@ export interface MultiPeerRTCOptions {
 
 export class MultiPeerRTC {
   private peers = new Map<UserId, RTCPeerConnection>();
-  private localStream?: MediaStream;
+  public localStream?: MediaStream;
 
   constructor(private options: MultiPeerRTCOptions) {
     this.options.iceServers = [{ urls: ["stun:stun.cloudflare.com:3478"] }];
@@ -76,6 +76,12 @@ export class MultiPeerRTC {
         });
       }
     };
+
+    pc.getStats().then((stats) => {
+      stats.entries().forEach((stat) => {
+        console.log("Initial stat for", userId, stat);
+      });
+    });
 
     pc.ontrack = ({ track, streams }) => {
       console.log("ontrack", userId, track, streams);
@@ -155,8 +161,9 @@ export class MultiPeerRTC {
       await pc.setRemoteDescription(description);
     } else {
       console.warn("Wrong signaling state for answer", pc.signalingState);
-      toast(`Wrong signaling state for answer, ${pc.signalingState}`, {
-        type: "error",
+      addToast({
+        title: `Wrong signaling state for answer, ${pc.signalingState}`,
+        color: "danger",
       });
     }
   }

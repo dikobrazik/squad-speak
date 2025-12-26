@@ -10,6 +10,7 @@ import {
   Req,
   Res,
   Sse,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
@@ -114,6 +115,12 @@ export class AuthorizationController {
   ) {
     let userId: string;
 
+    const refreshToken = request.cookies['refreshToken'];
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('No refresh token provided');
+    }
+
     try {
       ({ userId } = await this.authService.validateRefreshToken(
         request.cookies['refreshToken'],
@@ -122,8 +129,6 @@ export class AuthorizationController {
       response.clearCookie('refreshToken');
       throw error;
     }
-
-    console.log(userId);
 
     const accessToken = await this.authService.generateJwtToken(userId, '5m');
 

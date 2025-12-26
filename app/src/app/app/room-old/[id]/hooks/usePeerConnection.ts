@@ -1,5 +1,5 @@
+import { addToast } from "@heroui/toast";
 import { useEffect, useMemo, useRef } from "react";
-import { toast } from "react-toastify/unstyled";
 import type {
   SingleRoomClientToServerEvents,
   SingleRoomServerToClientEvents,
@@ -64,8 +64,9 @@ export const usePeerConnection = ({
         websocket.emit("answer", { description: pc.localDescription });
       } catch (error) {
         console.error("Error handling offer:", error);
-        toast(`Error handling offer, ${JSON.stringify(error)}`, {
-          type: "error",
+        addToast({
+          title: `Error handling offer, ${JSON.stringify(error)}`,
+          color: "danger",
         });
       }
     });
@@ -77,8 +78,9 @@ export const usePeerConnection = ({
         await pc.setRemoteDescription(description);
       } else {
         console.warn("Wrong signaling state for answer", pc.signalingState);
-        toast(`Wrong signaling state for answer, ${pc.signalingState}`, {
-          type: "error",
+        addToast({
+          title: `Wrong signaling state for answer, ${pc.signalingState}`,
+          color: "danger",
         });
       }
     });
@@ -88,8 +90,9 @@ export const usePeerConnection = ({
         await pc.addIceCandidate(candidate);
       } catch (err) {
         console.error(err);
-        toast(`Error adding ICE candidate, ${JSON.stringify(err)}`, {
-          type: "error",
+        addToast({
+          title: `Error adding ICE candidate, ${JSON.stringify(err)}`,
+          color: "danger",
         });
       }
     });

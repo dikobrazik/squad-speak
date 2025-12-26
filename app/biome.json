@@ -22,6 +22,21 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "style": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "next/image": {
+                "message": "Use import { Image } from \"@/src/components/Image\"; instead.",
+                "importNames": [
+                  "default"
+                ]
+              }
+            }
+          }
+        }
+      },
       "correctness": {
         "useExhaustiveDependencies": "off"
       },

@@ -1,5 +1,6 @@
 "use client";
 
+import { Spinner } from "@heroui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import {
   createContext,
@@ -10,7 +11,6 @@ import {
 import QRCode from "react-qr-code";
 import { SessionStatus } from "shared/types/session";
 import { refreshToken, setToken } from "@/src/api";
-import { Loader } from "@/src/components/Loader";
 import { useEstablishSession } from "./useEstablishSession";
 
 export const AuthContext = createContext<{ userId: string }>({
@@ -54,11 +54,10 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
           {status === SessionStatus.SCANNED && (
             <div className="absolute z-10 top-0 w-[256px] bottom-0 backdrop-blur-sm">
-              <Loader>
-                <span className="text-white text-center mt-2">
-                  Подтвердите вход в приложении телеграм
-                </span>
-              </Loader>
+              <Spinner />
+              <span className="text-white text-center mt-2">
+                Подтвердите вход в приложении телеграм
+              </span>
             </div>
           )}
         </div>

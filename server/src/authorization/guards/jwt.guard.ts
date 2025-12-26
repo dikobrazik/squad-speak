@@ -22,7 +22,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     //   context.getHandler(),
     //   context.getType(),
     // );
-    console.log('JWT Guard activated');
+    // console.log('JWT Guard activated');
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),

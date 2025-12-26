@@ -10,14 +10,14 @@ export class TurnService {
   @Inject(ConfigService)
   private readonly configService: ConfigService;
 
-  public async getTurnCredentials() {
+  public async getTurnCredentials(userId: string) {
     const apiToken = this.configService.get<string>('CLOUDFLARE_API_TOKEN');
     const turnKey = this.configService.get<string>('CLOUDFLARE_TURN_KEY');
 
     const response = await firstValueFrom(
       this.httpService.post(
         `https://rtc.live.cloudflare.com/v1/turn/keys/${turnKey}/credentials/generate-ice-servers`,
-        { ttl: 86400 },
+        { ttl: 86400, customIdentifier: userId },
         {
           headers: {
             Authorization: `Bearer ${apiToken}`,

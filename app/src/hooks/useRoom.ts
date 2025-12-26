@@ -1,6 +1,6 @@
+import { addToast } from "@heroui/toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify/unstyled";
 import type {
   SingleRoomClientToServerEvents,
   SingleRoomServerToClientEvents,
@@ -24,7 +24,10 @@ export const useRoom = ({
     });
 
     websocket.on("room-full", () => {
-      toast("Room is full. Redirecting to home page.", { type: "error" });
+      addToast({
+        title: "Room is full. Redirecting to home page.",
+        color: "danger",
+      });
       router.push("/");
     });
   }, []);

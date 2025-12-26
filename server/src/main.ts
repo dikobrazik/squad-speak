@@ -7,8 +7,9 @@ import cookieParser = require('cookie-parser');
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
-  const isDev = app.get(ConfigService).get('IS_DEV') === 'true';
+  const isDev = configService.get('IS_DEV') === 'true';
 
   app.enableCors({
     origin: isDev
@@ -29,4 +30,5 @@ async function bootstrap() {
 
   await app.listen(80);
 }
+
 bootstrap();

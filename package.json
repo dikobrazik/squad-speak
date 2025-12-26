@@ -4,9 +4,5 @@
   "workspaces": [
     "app",
     "server"
-  ],
-  "dependencies": {
-    "@nestjs/axios": "^4.0.1",
-    "axios": "^1.13.2"
-  }
+  ]
 }

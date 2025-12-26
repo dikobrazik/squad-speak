@@ -1,5 +1,5 @@
+import { addToast } from "@heroui/toast";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify/unstyled";
 import type {
   MultiRoomClientToServerEvents,
   MultiRoomServerToClientEvents,
@@ -17,6 +17,9 @@ export const useMultiPeerConnection = ({
   >;
 }) => {
   const { userId } = useAuthContext();
+  const [localStream, setLocalStream] = useState<MediaStream | undefined>(
+    undefined,
+  );
   const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(
     new Map(),
   );
@@ -27,10 +30,10 @@ export const useMultiPeerConnection = ({
     const rtc = new MultiPeerRTC({
       userId,
       onPeerConnected: (userId) => {
-        toast.info(`User ${userId} connected`);
+        addToast({ title: `User ${userId} connected`, color: "secondary" });
       },
       onPeerDisconnected: (userId) => {
-        toast.info(`User ${userId} disconnected`);
+        addToast({ title: `User ${userId} disconnected`, color: "secondary" });
         setRemoteStreams((prev) => {
           const newMap = new Map(prev);
           newMap.delete(userId);
@@ -57,54 +60,42 @@ export const useMultiPeerConnection = ({
         audio: true,
       });
 
+      setLocalStream(stream);
       await rtc.setLocalStream(stream);
 
       websocket.connect();
     })();
 
-    // incoming signals
-    const handleStartCall = (userIds: string[]) => {
+    websocket.on("start-call", (userIds) => {
       userIds.forEach((userId) => {
         rtc.createOffer(userId);
       });
-    };
-    const handleOffer = async (msg: any) => {
+    });
+    websocket.on("offer", async (msg) => {
       if (msg.to !== userId) return;
       await rtc.handleOffer(msg.from, msg.data);
-    };
-    const handleAnswer = async (msg: any) => {
+    });
+    websocket.on("answer", async (msg) => {
       if (msg.to !== userId) return;
       await rtc.handleAnswer(msg.from, msg.data);
-    };
-    const handleIce = async (msg: any) => {
+    });
+    websocket.on("ice-candidate", async (msg) => {
       if (msg.to !== userId) return;
       await rtc.handleIce(msg.from, msg.data);
-    };
-    const handleDisconnected = async (msg: any) => {
+    });
+    websocket.on("connected", (msg) => {
+      addToast({ title: `User ${msg.userId} connected`, color: "secondary" });
       rtc.closePeer(msg.userId);
-    };
-    const handleConnected = async (msg: any) => {
-      toast(`User ${msg.userId} connected`);
+    });
+    websocket.on("disconnected", (msg) => {
       rtc.closePeer(msg.userId);
-    };
-
-    websocket.on("start-call", handleStartCall);
-    websocket.on("offer", handleOffer);
-    websocket.on("answer", handleAnswer);
-    websocket.on("ice-candidate", handleIce);
-    websocket.on("connected", handleConnected);
-    websocket.on("disconnected", handleDisconnected);
+    });
 
     return () => {
       rtc.closeAll();
-      websocket.off("start-call", handleStartCall);
-      websocket.off("offer", handleOffer);
-      websocket.off("answer", handleAnswer);
-      websocket.off("ice-candidate", handleIce);
-      websocket.off("connected", handleConnected);
-      websocket.off("disconnected", handleDisconnected);
+      websocket.offAny();
     };
   }, [userId, websocket]);
 
-  return { remoteStreams };
+  return { localStream, remoteStreams };
 };

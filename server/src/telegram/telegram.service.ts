@@ -3,9 +3,11 @@ import {
   Inject,
   Injectable,
   NotFoundException,
+  OnModuleDestroy,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import localtunnel from 'localtunnel';
 import { AuthorizationService } from 'src/authorization/authorization.service';
 import { TelegramAccount } from 'src/entities/TelegramAccount';
 import { User } from 'src/entities/User';
@@ -95,8 +97,8 @@ export class TelegramService {
   private async linkTelegramAccount(sessionId: string, user: TelegramUser) {
     const telegramId = user.id;
     const username = user.username;
-    const firstName = user.first_name;
-    const lastName = user.last_name;
+    const firstName = user.first_name ?? '';
+    const lastName = user.last_name ?? '';
 
     const session = this.authService.getSession(sessionId);
     if (!session || session.telegramId !== telegramId) {
