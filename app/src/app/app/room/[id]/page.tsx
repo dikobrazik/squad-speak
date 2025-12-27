@@ -27,6 +27,8 @@ export default function RoomPage() {
         {localStream && (
           <Participant
             key="local"
+            muted
+            isLocal
             userId={String(userId)}
             stream={localStream}
           />

@@ -12,7 +12,11 @@ import css from "./Participant.module.scss";
 export const Participant = ({
   userId,
   stream,
+  isLocal,
+  muted,
 }: {
+  isLocal?: boolean;
+  muted?: boolean;
   userId: string;
   stream: MediaStream;
 }) => {
@@ -45,7 +49,7 @@ export const Participant = ({
           {data?.name}
         </Skeleton>
       </div>
-      <AudioPlayer stream={stream} />
+      {!isLocal && <AudioPlayer muted={muted} stream={stream} />}
     </div>
   );
 };

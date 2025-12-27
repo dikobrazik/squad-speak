@@ -1,7 +1,13 @@
 import { Slider } from "@heroui/slider";
 import { useEffect, useRef, useState } from "react";
 
-export const AudioPlayer = ({ stream }: { stream: MediaStream }) => {
+export const AudioPlayer = ({
+  stream,
+  muted,
+}: {
+  stream: MediaStream;
+  muted?: boolean;
+}) => {
   const [volume, setVolume] = useState(100);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -21,8 +27,14 @@ export const AudioPlayer = ({ stream }: { stream: MediaStream }) => {
 
   return (
     <div>
-      {/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
-      <video className="hidden" ref={videoRef} autoPlay playsInline controls />
+      <video
+        className="hidden"
+        ref={videoRef}
+        autoPlay
+        playsInline
+        controls
+        muted={muted}
+      />
       <Slider
         label="Volume"
         value={volume}
