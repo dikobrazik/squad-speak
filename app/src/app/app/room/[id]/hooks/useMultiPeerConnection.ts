@@ -94,6 +94,7 @@ export const useMultiPeerConnection = ({
     return () => {
       rtc.closeAll();
       websocket.offAny();
+      websocket.disconnect();
     };
   }, [userId, websocket]);
 

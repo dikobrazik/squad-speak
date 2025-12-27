@@ -12,7 +12,6 @@ export interface SignalMessage {
 
 export interface MultiPeerRTCOptions {
   userId: string;
-  iceServers?: RTCIceServer[];
   onRemoteStream?: (userId: UserId, stream: MediaStream) => void;
   onPeerConnected?: (userId: UserId) => void;
   onPeerDisconnected?: (userId: UserId) => void;
@@ -23,11 +22,19 @@ export class MultiPeerRTC {
   private peers = new Map<UserId, RTCPeerConnection>();
   public localStream?: MediaStream;
 
-  constructor(private options: MultiPeerRTCOptions) {
-    this.options.iceServers = [{ urls: ["stun:stun.cloudflare.com:3478"] }];
+  private iceServers: RTCIceServer[] = [
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun3.l.google.com:19302" },
+    { urls: "stun:stun4.l.google.com:19302" },
+    { urls: "stun:stun.stunprotocol.org:3478" },
+    { urls: "stun:stunserver2024.stunprotocol.org:3478" },
+  ];
 
+  constructor(private options: MultiPeerRTCOptions) {
     getTurnServers().then((response) => {
-      this.options.iceServers = response.iceServers;
+      this.iceServers.push(...response.iceServers);
     });
   }
 
@@ -51,7 +58,7 @@ export class MultiPeerRTC {
     }
 
     const pc = new RTCPeerConnection({
-      iceServers: this.options.iceServers,
+      iceServers: this.iceServers,
     });
 
     this.peers.set(userId, pc);

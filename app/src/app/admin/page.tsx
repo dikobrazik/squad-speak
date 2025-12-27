@@ -11,7 +11,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { getUsersList } from "@/src/api";
 import { getProfilePhotoUrl } from "@/src/api/telegram";
-import { ExternalImage } from "@/src/components/Image";
+import { ExternalImage } from "@/src/components/ExternalImage";
 
 export default function AdminPage() {
   const { data, error, isLoading } = useQuery({

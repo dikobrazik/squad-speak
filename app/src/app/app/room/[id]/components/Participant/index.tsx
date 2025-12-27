@@ -4,7 +4,7 @@ import { Skeleton } from "@heroui/skeleton";
 import { cn } from "@heroui/theme";
 import { useQuery } from "@tanstack/react-query";
 import { getProfile, getProfilePhotoUrl } from "@/src/api/telegram";
-import { ExternalImage } from "@/src/components/Image";
+import { ExternalImage } from "@/src/components/ExternalImage";
 import { useVolumeAnimation } from "../../hooks/useVolumeAnimation";
 import { AudioPlayer } from "../AudioPlayer";
 import css from "./Participant.module.scss";
