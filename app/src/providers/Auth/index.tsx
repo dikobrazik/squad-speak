@@ -2,6 +2,7 @@
 
 import { Spinner } from "@heroui/spinner";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import {
   createContext,
   type PropsWithChildren,
@@ -55,7 +56,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     return (
       <div className="h-screen flex flex-col justify-center">
         <div className="relative flex justify-center">
-          {qrUrl && <QRCode value={qrUrl} />}
+          {qrUrl && (
+            <Link href={qrUrl}>
+              <QRCode value={qrUrl} />
+            </Link>
+          )}
 
           {status === SessionStatus.SCANNED && (
             <div className="absolute z-10 top-0 w-[256px] bottom-0 backdrop-blur-sm">
