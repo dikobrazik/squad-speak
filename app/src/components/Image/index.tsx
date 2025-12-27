@@ -1,7 +1,6 @@
-// biome-ignore lint/style/noRestrictedImports: компонент обертка для next/image
 import NextImage, { type ImageProps } from "next/image";
 
-export const Image = (props: ImageProps) => {
+export const ExternalImage = (props: ImageProps) => {
   return (
     <NextImage
       data-loaded="false"

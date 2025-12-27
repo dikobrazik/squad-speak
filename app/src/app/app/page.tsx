@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@heroui/button";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { createRoom, getRooms } from "../../api";
@@ -19,7 +18,7 @@ export default function Home() {
     },
   });
 
-  const onCreateRoom = async () => {
+  const _onCreateRoom = async () => {
     mutateRoom();
   };
 

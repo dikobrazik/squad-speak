@@ -102,7 +102,7 @@ export class AuthorizationController {
       this.authService.generateJwtToken(session.userId),
       this.authService.generateJwtToken(
         session.userId,
-        session.rememberMe ? '30d' : '2min',
+        session.rememberMe ? '30d' : '1min',
       ),
     ]);
 

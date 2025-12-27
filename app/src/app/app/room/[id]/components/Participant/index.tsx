@@ -4,7 +4,7 @@ import { Skeleton } from "@heroui/skeleton";
 import { cn } from "@heroui/theme";
 import { useQuery } from "@tanstack/react-query";
 import { getProfile, getProfilePhotoUrl } from "@/src/api/telegram";
-import { Image } from "@/src/components/Image";
+import { ExternalImage } from "@/src/components/Image";
 import { useVolumeAnimation } from "../../hooks/useVolumeAnimation";
 import { AudioPlayer } from "../AudioPlayer";
 import css from "./Participant.module.scss";
@@ -33,7 +33,7 @@ export const Participant = ({
             <div ref={barRef} className={css.bar}></div>
           </div>
           <Skeleton isLoaded={isLoaded}>
-            <Image
+            <ExternalImage
               src={getProfilePhotoUrl(userId)}
               alt={data?.name || "User Photo"}
               width={50}

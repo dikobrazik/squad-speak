@@ -35,6 +35,8 @@ export class TelegramService {
       // Update existing account
       account.username = username || '';
       account.name = `${firstName} ${lastName}`.trim();
+
+      session.userId = account.user_id;
     } else {
       const user = this.userRepository.create();
 
@@ -47,9 +49,11 @@ export class TelegramService {
         name: `${firstName} ${lastName}`.trim(),
         user_id: userEntity.id,
       });
+
+      session.userId = userEntity.id;
     }
 
-    session.userId = account.user_id;
+    console.log('telegram account:', account);
 
     await this.telegramAccountRepository.save(account);
   }

@@ -40,10 +40,15 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const { qrUrl, status } = useEstablishSession({
     rememberMe,
     enabled: needToEstablishSession,
+    setUserId,
   });
 
   if (!isFetched) {
-    return null;
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        <Spinner />
+      </div>
+    );
   }
 
   if (!userId) {

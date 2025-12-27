@@ -1,0 +1,41 @@
+.head {
+  .heading {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 5rem;
+    text-transform: uppercase;
+    text-align: center;
+
+    & span {
+      color: hsl(var(--heroui-primary));
+    }
+  }
+}
+
+.section {
+  padding: 0 2rem;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+
+  padding: 0 calc(var(--spacing) * 4);
+
+  background-origin: border-box;
+
+  &:nth-of-type(2) {
+    background-image: url('./assets/section1bg.svg');
+  }
+
+  &:nth-of-type(3) {
+    background-image: url('./assets/section2bg.svg');
+  }
+
+  &:nth-of-type(4) {
+    background-image: url('./assets/section3bg.svg');
+  }
+
+  & h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+}

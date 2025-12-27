@@ -15,7 +15,6 @@ export const useSse = <Data extends string | object = any>(
   const { onMessage, enabled = true } = options;
 
   useEffect(() => {
-    console.log("SSE enabled:", enabled);
     if (!enabled) {
       return;
     }
