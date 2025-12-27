@@ -97,7 +97,10 @@ export class TelegramBotService {
 
       return `https://api.telegram.org/file/bot${this.botToken}/${filePath}`;
     } else {
-      throw new NotFoundException();
+      throw new NotFoundException({
+        message: 'Photo not found',
+        error: 'photo_not_found',
+      });
     }
   }
 }

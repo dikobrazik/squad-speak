@@ -24,7 +24,10 @@ export class TelegramService {
 
     const session = this.telegramAuthSessionService.getSession(sessionId);
     if (!session || session.telegramId !== telegramId) {
-      throw new NotFoundException('Session not found or mismatched telegramId');
+      throw new NotFoundException({
+        message: 'Session not found or mismatched telegramId',
+        error: 'telegram_auth_session_not_found',
+      });
     }
 
     let account = await this.telegramAccountRepository.findOneBy({

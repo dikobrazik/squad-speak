@@ -125,7 +125,10 @@ export class AuthorizationController {
     const refreshToken = request.cookies['refreshToken'];
 
     if (!refreshToken) {
-      throw new UnauthorizedException('No refresh token provided');
+      throw new UnauthorizedException({
+        message: 'No refresh token provided',
+        error: 'no_refresh_token',
+      });
     }
 
     try {

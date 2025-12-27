@@ -10,9 +10,10 @@ export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
       new QueryClient({
         defaultOptions: {
           queries: {
+            refetchOnWindowFocus: false,
             retry(failureCount, error) {
               if (isAxiosError(error) && error.response?.status === 401) {
-                if (error.response.data?.message === "token_expired") {
+                if (error.response.data?.error === "token_expired") {
                   queryClient.invalidateQueries({ queryKey: ["refreshToken"] });
                 }
 
