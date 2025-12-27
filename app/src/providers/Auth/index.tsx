@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   if (!isFetched) {
     return (
-      <div className="w-full h-full flex justify-center items-center">
+      <div className="w-full h-screen flex justify-center items-center">
         <Spinner />
       </div>
     );
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
 
   if (!userId) {
     return (
-      <div className="h-full flex flex-col justify-center">
+      <div className="h-screen flex flex-col justify-center">
         <div className="relative flex justify-center">
           {qrUrl && <QRCode value={qrUrl} />}
 

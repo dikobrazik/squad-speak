@@ -21,7 +21,7 @@ export default function RoomPage() {
   });
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center">
+    <div className="flex flex-col h-full items-center justify-center">
       <UsersCount count={usersCount} />
       <div className="flex flex-wrap gap-4">
         {localStream && (

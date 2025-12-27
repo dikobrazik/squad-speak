@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Controller, Get, Inject, Param, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { Public } from 'src/authorization/decorators/public.decorator';
+import { Admin } from 'src/decorators/admin.decorator';
 import { TelegramBotService } from './bot/telegram-bot.service';
 import { TelegramService } from './telegram.service';
 
@@ -13,6 +14,12 @@ export class TelegramController {
   private readonly telegramService: TelegramService;
   @Inject(TelegramBotService)
   private readonly telegramBotService: TelegramBotService;
+
+  @Admin()
+  @Get()
+  getAccounts() {
+    return this.telegramService.getAccounts();
+  }
 
   @Get('profile/:id')
   getProfile(@Param('id') id: string) {

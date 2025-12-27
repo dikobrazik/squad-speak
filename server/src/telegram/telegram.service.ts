@@ -61,4 +61,8 @@ export class TelegramService {
   public getProfile(userId: string) {
     return this.telegramAccountRepository.findOneBy({ user_id: userId });
   }
+
+  public getAccounts() {
+    return this.telegramAccountRepository.find();
+  }
 }

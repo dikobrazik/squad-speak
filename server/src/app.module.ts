@@ -12,6 +12,7 @@ import { Room } from './entities/Room';
 import { TelegramAccount } from './entities/TelegramAccount';
 import { User } from './entities/User';
 import { EventsModule } from './events/events.module';
+import { RolesGuard } from './guards/roles.guard';
 import { RoomModule } from './room/room.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { TelegramAuthSessionService } from './telegram/telegram-auth-session.service';
@@ -54,6 +55,10 @@ import { UserModule } from './user/user.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard, // Используем кастомный Guard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
     TelegramAuthSessionService,
   ],

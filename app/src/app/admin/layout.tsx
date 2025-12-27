@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Providers } from "@/src/providers";
 
-export default function Layout({
+export default function AdminLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (

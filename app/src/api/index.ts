@@ -12,6 +12,7 @@ export const setToken = (token: string | null) => {
   }
 };
 
+export * from "./admin";
 export * from "./auth";
 export * from "./room";
 export * from "./turn";
