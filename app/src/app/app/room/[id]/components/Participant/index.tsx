@@ -5,6 +5,7 @@ import { cn } from "@heroui/theme";
 import { useQuery } from "@tanstack/react-query";
 import { getProfile, getProfilePhotoUrl } from "@/src/api/telegram";
 import { ExternalImage } from "@/src/components/ExternalImage";
+import { useProfile } from "@/src/hooks/useProfile";
 import { useVolumeAnimation } from "../../hooks/useVolumeAnimation";
 import { AudioPlayer } from "../AudioPlayer";
 import css from "./Participant.module.scss";
@@ -20,12 +21,9 @@ export const Participant = ({
   userId: string;
   stream: MediaStream;
 }) => {
-  const { data, isLoading } = useQuery({
-    queryKey: ["telegram", "profile", userId],
-    queryFn: () => getProfile(userId),
-  });
+  const { profile, isLoading } = useProfile(userId);
 
-  const isLoaded = Boolean(!isLoading && data);
+  const isLoaded = Boolean(!isLoading && profile);
 
   const barRef = useVolumeAnimation({ stream });
 
@@ -37,16 +35,18 @@ export const Participant = ({
             <div ref={barRef} className={css.bar}></div>
           </div>
           <Skeleton isLoaded={isLoaded}>
-            <ExternalImage
-              src={getProfilePhotoUrl(userId)}
-              alt={data?.name || "User Photo"}
-              width={50}
-              height={50}
-            />
+            {profile.photoUrl && (
+              <ExternalImage
+                src={profile.photoUrl}
+                alt={profile?.name || "User Photo"}
+                width={50}
+                height={50}
+              />
+            )}
           </Skeleton>
         </div>
         <Skeleton className="ml-2" isLoaded={isLoaded}>
-          {data?.name}
+          {profile?.name}
         </Skeleton>
       </div>
       {!isLocal && <AudioPlayer muted={muted} stream={stream} />}

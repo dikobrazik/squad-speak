@@ -5,6 +5,8 @@ import { TelegramBotService } from './telegram/bot/telegram-bot.service';
 
 import cookieParser = require('cookie-parser');
 
+import { ValidationPipe } from '@nestjs/common';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
@@ -24,6 +26,7 @@ async function bootstrap() {
     exclude: [],
   });
 
+  app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
 
   app.use(await app.get(TelegramBotService).createBot());

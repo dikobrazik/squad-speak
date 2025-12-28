@@ -1,4 +1,5 @@
 import { addToast } from "@heroui/toast";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type {
   MultiRoomClientToServerEvents,
@@ -17,6 +18,7 @@ export const useMultiPeerConnection = ({
     MultiRoomClientToServerEvents
   >;
 }) => {
+  const router = useRouter();
   const { userId } = useAuthContext();
   const [localStream, setLocalStream] = useState<MediaStream | undefined>(
     undefined,
@@ -93,6 +95,10 @@ export const useMultiPeerConnection = ({
     });
     websocket.on("disconnected", (msg) => {
       rtc.closePeer(msg.userId);
+    });
+    websocket.on("invalid-password", () => {
+      addToast({ title: `Invalid room password`, color: "danger" });
+      router.push("/app/room");
     });
 
     return () => {

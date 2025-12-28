@@ -44,10 +44,23 @@ export class MultiUserEventsGateway {
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
 
-    if ((await this.roomService.getRoom(roomId)) === null) {
+    const room = await this.roomService.getRoom(roomId);
+
+    if (room === null) {
       client.emit('room-not-found');
       client.disconnect();
       return;
+    }
+
+    if (room.passwordHash) {
+      const providedPassword = String(client.handshake.auth.password || '');
+      const providedPasswordHash = RoomService['hash'](providedPassword);
+
+      if (providedPasswordHash !== room.passwordHash) {
+        client.emit('invalid-password');
+        client.disconnect();
+        return;
+      }
     }
 
     const usersInRoom = this.roomStateService.getUsersCount(roomId);

@@ -9,6 +9,7 @@ export type MultiRoomServerToClientEvents = {
 	"disconnected": (payload: {userId: string}) => void;
 
 	"room-not-found": () => void;
+	"invalid-password": () => void;
 	"room-full": () => void;
 	"start-call": (userIds: string[]) => void;
 	"room-status": (payload: { usersCount: number }) => void;

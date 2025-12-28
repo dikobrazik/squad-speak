@@ -1,18 +1,21 @@
 import {
-	Column,
-	CreateDateColumn,
-	Entity,
-	PrimaryGeneratedColumn,
-} from "typeorm";
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Room {
-	@PrimaryGeneratedColumn("uuid")
-	id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-	@Column()
-	name: string;
+  @Column()
+  name: string;
 
-	@CreateDateColumn()
-	createdAt: Date;
+  @Column({ nullable: true })
+  passwordHash: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

@@ -11,3 +11,10 @@ body {
 main {
   background: linear-gradient(200deg, #787ed3, #9772d2);
 }
+
+@layer components {
+  * {
+    scrollbar-color: hsl(var(--heroui-primary)) transparent;
+    scrollbar-width: thin;
+  }
+}

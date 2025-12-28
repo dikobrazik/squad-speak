@@ -6,9 +6,11 @@ import type {
 import { io, type Socket } from "socket.io-client";
 import { WS_BASE_URL } from "@/src/config";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
+import { useRoomsPasswordsStore } from "../providers/RoomPasswordStore";
 
 export const useSocketIO = (roomId: string, namespace?: string) => {
   const { userId } = useAuthContext();
+  const { passwords } = useRoomsPasswordsStore();
 
   const [socket] = useState(
     () =>
@@ -20,6 +22,7 @@ export const useSocketIO = (roomId: string, namespace?: string) => {
         },
         auth: {
           userId,
+          password: passwords[roomId],
         },
       }) as Socket<
         SingleRoomServerToClientEvents,
