@@ -5,6 +5,7 @@ import type {
   MultiRoomServerToClientEvents,
 } from "shared/types/websockets/multi-room";
 import type { Socket } from "socket.io-client";
+import { getTurnServers } from "@/src/api";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
 import { MultiPeerRTC } from "@/src/services/MultiPeerRTC";
 
@@ -60,6 +61,10 @@ export const useMultiPeerConnection = ({
         audio: true,
       });
 
+      await getTurnServers().then((response) => {
+        rtc.enrichIceServers(response.iceServers);
+      });
+
       setLocalStream(stream);
       await rtc.setLocalStream(stream);
 
@@ -84,7 +89,6 @@ export const useMultiPeerConnection = ({
       await rtc.handleIce(msg.from, msg.data);
     });
     websocket.on("connected", (msg) => {
-      addToast({ title: `User ${msg.userId} connected`, color: "secondary" });
       rtc.closePeer(msg.userId);
     });
     websocket.on("disconnected", (msg) => {

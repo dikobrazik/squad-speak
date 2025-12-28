@@ -18,6 +18,7 @@ export default function LandingPage() {
             alt="SquadSpeak Logo"
             width={128}
             height={72}
+            priority
           />
         </Link>
 
