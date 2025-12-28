@@ -1,5 +1,8 @@
 import axios from "axios";
 
+export const checkIsAdmin = () =>
+  axios.get("/admin/check").then((response) => response.data);
+
 type TelegramAccount = {
   id: string;
   user_id: string;

@@ -12,6 +12,7 @@ import {
 import QRCode from "react-qr-code";
 import { SessionStatus } from "shared/types/session";
 import { refreshToken, setToken } from "@/src/api";
+import { LoadingPage } from "@/src/components/LoadingPage";
 import { useEstablishSession } from "./useEstablishSession";
 
 export const AuthContext = createContext<{ userId: string }>({
@@ -45,11 +46,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   });
 
   if (!isFetched) {
-    return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <Spinner />
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (!userId) {

@@ -16,6 +16,7 @@ import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import { interval, map, Observable } from 'rxjs';
 import { SessionStatus } from 'shared/types/session';
+import { Admin } from 'src/decorators/admin.decorator';
 import { TelegramAuthSessionService } from 'src/telegram/telegram-auth-session.service';
 import { UserService } from 'src/user/user.service';
 import { AuthorizationService } from './authorization.service';
@@ -146,5 +147,11 @@ export class AuthorizationController {
       userId,
       accessToken,
     };
+  }
+
+  @Admin()
+  @Get('admin/check')
+  checkAdminRole() {
+    return { message: 'Admin role verified' };
   }
 }
