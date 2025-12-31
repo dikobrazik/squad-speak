@@ -12,17 +12,13 @@ const nextConfig: NextConfig = {
   images: {
     dangerouslyAllowLocalIP: isDev,
     remotePatterns: [
-      isDev
-        ? {
-            protocol: "http",
-            hostname: "localhost",
-            pathname: "/api/telegram/profile/**",
-          }
-        : {
-            protocol: "https",
-            hostname: `${process.env.BASE_URL}`,
-            pathname: "/api/telegram/profile/**",
-          },
+      {
+        protocol: isDev ? "http" : "https",
+        hostname: isDev
+          ? "localhost"
+          : (process.env.BASE_URL?.replace(/^https?:\/\//, "") ?? ""),
+        pathname: "/api/telegram/profile/**",
+      },
     ],
   },
 };

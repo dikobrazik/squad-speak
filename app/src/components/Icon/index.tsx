@@ -7,5 +7,5 @@ type IconProps = {
 };
 
 export const Icon = (props: IconProps) => {
-  return icons[props.name]({ ...props });
+  return icons[props.name]({ size: 24, ...props });
 };
