@@ -12,7 +12,7 @@ import {
 } from 'shared/types/websockets/multi-room';
 import type { Server, Socket } from 'socket.io';
 import { RoomService } from 'src/room/room.service';
-import { RoomStateService } from './rooms.service';
+import { RoomStateService } from './rooms-state.service';
 
 type Client = Socket<
   MultiRoomClientToServerEvents,
