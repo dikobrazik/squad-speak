@@ -12,7 +12,7 @@ import {
 } from 'shared/types/websockets/multi-room';
 import type { Server, Socket } from 'socket.io';
 import { RoomService } from 'src/room/room.service';
-import { RoomStateService } from './rooms-state.service';
+import { RoomStateService } from '../room/rooms-state.service';
 
 type Client = Socket<
   MultiRoomClientToServerEvents,
@@ -31,7 +31,6 @@ type Client = Socket<
 export class MultiUserEventsGateway {
   @Inject(RoomStateService)
   private roomStateService: RoomStateService;
-
   @Inject(RoomService)
   private roomService: RoomService;
 

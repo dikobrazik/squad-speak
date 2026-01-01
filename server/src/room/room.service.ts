@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'crypto';
 import { Room } from 'src/entities/Room';
+import { RoomStateService } from 'src/room/rooms-state.service';
 import type { Repository } from 'typeorm';
 
 @Injectable()
 export class RoomService {
   @InjectRepository(Room)
   private readonly roomRepository: Repository<Room>;
+  @Inject(RoomStateService)
+  private readonly roomStateService: RoomStateService;
 
   createRoom(name: string, password: string): Promise<Room> {
     const passwordHash = RoomService.hash(password);
@@ -23,6 +26,12 @@ export class RoomService {
   getRooms(): Promise<(Room & { protected: boolean })[]> {
     return this.roomRepository
       .find()
+      .then((rooms) =>
+        rooms.map((room) => ({
+          ...room,
+          usersIdsInRoom: this.roomStateService.getRoomUsersIds(room.id),
+        })),
+      )
       .then((rooms) => rooms.map(this.marshalRoom));
   }
 
