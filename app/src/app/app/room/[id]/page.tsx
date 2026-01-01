@@ -18,14 +18,17 @@ export default function RoomPage() {
 
   const { usersCount } = useRoom({ websocket });
 
-  const { localStream, remoteStreams } = useMultiPeerConnection({
+  const { dataChannel, localStream, remoteStreams } = useMultiPeerConnection({
     websocket,
   });
 
   return (
     <div className="flex h-full">
       <div className="h-full flex flex-col flex-3 p-4">
-        <Chat controls={<SelfAudioControls stream={localStream} />} />
+        <Chat
+          dataChannel={dataChannel}
+          controls={<SelfAudioControls stream={localStream} />}
+        />
       </div>
       <aside className="flex flex-1 flex-col h-full justify-start border-l p-4">
         {/* <UsersCount count={usersCount} /> */}

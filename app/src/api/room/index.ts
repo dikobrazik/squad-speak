@@ -1,10 +1,11 @@
 import axios from "axios";
 
-type Room = {
+export type Room = {
   id: string;
   name: string;
   protected?: string;
   createdAt: string;
+  usersIdsInRoom: string[];
 };
 export const getRooms = () =>
   axios.get<Room[]>("/room").then((response) => response.data);

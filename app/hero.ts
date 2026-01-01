@@ -21,6 +21,9 @@ export default heroui({
           DEFAULT: "#F2B714",
           foreground: "#ffffff",
         },
+        secondary: {
+          DEFAULT: "#6C63FF",
+        },
         success: {
           DEFAULT: "#A6ED55",
         },

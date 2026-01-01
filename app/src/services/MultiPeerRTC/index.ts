@@ -1,3 +1,4 @@
+import type { DataChannel } from "../DataChannel";
 import { ICE_SERVERS } from "./constants";
 
 type UserId = string;
@@ -10,6 +11,7 @@ export interface SignalMessage {
 }
 
 export interface MultiPeerRTCOptions {
+  dataChannel: DataChannel;
   userId: string;
   onRemoteStream?: (userId: UserId, stream: MediaStream) => void;
   onPeerConnected?: (userId: UserId) => void;
@@ -19,6 +21,7 @@ export interface MultiPeerRTCOptions {
 
 export class MultiPeerRTC {
   private peers = new Map<UserId, RTCPeerConnection>();
+  private dataChannels = new Map<UserId, RTCDataChannel>();
   private localStream?: MediaStream;
 
   private iceServers: RTCIceServer[] = structuredClone(ICE_SERVERS);
@@ -61,8 +64,14 @@ export class MultiPeerRTC {
       });
     }
 
+    this.createDataChannel(userId, pc);
+
+    pc.ondatachannel = (e) => {
+      this.options.dataChannel.addDataChannel(userId, e.channel);
+    };
+
     pc.onicecandidate = ({ candidate }) => {
-      console.info("onicecandidate", userId, candidate);
+      // console.info("onicecandidate", userId, candidate);
       if (candidate) {
         this.options.sendSignal({
           to: userId,
@@ -95,6 +104,14 @@ export class MultiPeerRTC {
     };
 
     return pc;
+  }
+
+  private createDataChannel(userId: string, pc: RTCPeerConnection) {
+    const dc = pc.createDataChannel("chat", {
+      ordered: true,
+    });
+
+    this.options.dataChannel.addDataChannel(userId, dc);
   }
 
   /* ---------- Offer / Answer ---------- */
@@ -171,7 +188,7 @@ export class MultiPeerRTC {
     const pc = this.peers.get(userId);
     if (!pc) return;
 
-    console.info("Adding ICE candidate from", userId, candidate);
+    // console.info("Adding ICE candidate from", userId, candidate);
 
     await pc.addIceCandidate(candidate);
   }

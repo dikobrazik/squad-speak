@@ -1,6 +1,6 @@
 import { addToast } from "@heroui/toast";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type {
   MultiRoomClientToServerEvents,
   MultiRoomServerToClientEvents,
@@ -8,6 +8,7 @@ import type {
 import type { Socket } from "socket.io-client";
 import { getTurnServers } from "@/src/api";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
+import { DataChannel } from "@/src/services/DataChannel";
 import { MultiPeerRTC } from "@/src/services/MultiPeerRTC";
 
 export const useMultiPeerConnection = ({
@@ -20,6 +21,8 @@ export const useMultiPeerConnection = ({
 }) => {
   const router = useRouter();
   const { userId } = useAuthContext();
+  const dataChannel = useMemo(() => new DataChannel(userId), [userId]);
+
   const [localStream, setLocalStream] = useState<MediaStream | undefined>(
     undefined,
   );
@@ -31,6 +34,7 @@ export const useMultiPeerConnection = ({
     if (!userId) return;
 
     const rtc = new MultiPeerRTC({
+      dataChannel,
       userId,
       onPeerConnected: (userId) => {
         addToast({ title: `User ${userId} connected`, color: "secondary" });
@@ -108,5 +112,5 @@ export const useMultiPeerConnection = ({
     };
   }, [userId, websocket]);
 
-  return { localStream, remoteStreams };
+  return { dataChannel, localStream, remoteStreams };
 };

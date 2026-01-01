@@ -12,7 +12,7 @@ import {
 import { Form } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { type PropsWithChildren, useState } from "react";
 import { checkRoomPassword, getRoom } from "@/src/api";
 import { LoadingPage } from "@/src/components/LoadingPage";
@@ -22,6 +22,7 @@ import {
 } from "@/src/providers/RoomPasswordStore";
 
 export default function Layout({ children }: PropsWithChildren) {
+  const router = useRouter();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { passwords, addPassword } = useRoomsPasswordsStore();
   const roomId = String(useParams().id);
@@ -54,7 +55,7 @@ export default function Layout({ children }: PropsWithChildren) {
   if (room.protected && passwords[roomId] === undefined) {
     return (
       <div>
-        <Modal isOpen>
+        <Modal isOpen onClose={() => router.push("/app")}>
           <ModalContent>
             {() => (
               <>
