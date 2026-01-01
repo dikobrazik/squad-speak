@@ -1,6 +1,7 @@
 import * as icons from "./icons";
 
 type IconProps = {
+  className?: string;
   name: keyof typeof icons;
   size?: number;
   color?: string;

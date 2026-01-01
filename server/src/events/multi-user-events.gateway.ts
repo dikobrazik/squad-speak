@@ -102,6 +102,34 @@ export class MultiUserEventsGateway {
     client.to(String(client.handshake.query.roomId)).emit('answer', data);
   }
 
+  @SubscribeMessage('mute')
+  handleMute(
+    @MessageBody() data: Parameters<MultiRoomClientToServerEvents['mute']>[0],
+    @ConnectedSocket() client: Client,
+  ): void {
+    this.roomStateService.muteUserInRoom(
+      String(client.handshake.query.roomId),
+      data.from,
+    );
+    client
+      .to(String(client.handshake.query.roomId))
+      .emit('muted', { userId: data.from });
+  }
+
+  @SubscribeMessage('unmute')
+  handleUnmute(
+    @MessageBody() data: Parameters<MultiRoomClientToServerEvents['unmute']>[0],
+    @ConnectedSocket() client: Client,
+  ): void {
+    this.roomStateService.unmuteUserInRoom(
+      String(client.handshake.query.roomId),
+      data.from,
+    );
+    client
+      .to(String(client.handshake.query.roomId))
+      .emit('unmuted', { userId: data.from });
+  }
+
   @SubscribeMessage('ice-candidate')
   handleIceCandidate(
     @MessageBody() data: Parameters<

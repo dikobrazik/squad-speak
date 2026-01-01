@@ -3,6 +3,7 @@
 import { Skeleton } from "@heroui/skeleton";
 import { cn } from "@heroui/theme";
 import { ExternalImage } from "@/src/components/ExternalImage";
+import { Icon } from "@/src/components/Icon";
 import { useProfile } from "@/src/hooks/useProfile";
 import { useVolumeAnimation } from "../../hooks/useVolumeAnimation";
 import { AudioPlayer } from "../AudioPlayer";
@@ -32,14 +33,21 @@ export const Participant = ({
           <div className={cn(css.meter, "self-stretch")}>
             <div ref={barRef} className={css.bar}></div>
           </div>
-          <Skeleton isLoaded={isLoaded}>
+          <Skeleton classNames={{ content: "relative" }} isLoaded={isLoaded}>
             {profile.photoUrl && (
-              <ExternalImage
-                src={profile.photoUrl}
-                alt={profile?.name || "User Photo"}
-                width={50}
-                height={50}
-              />
+              <>
+                <ExternalImage
+                  src={profile.photoUrl}
+                  alt={profile?.name || "User Photo"}
+                  width={50}
+                  height={50}
+                />
+                {muted && (
+                  <div className="absolute right-0 bottom-0 bg-danger">
+                    <Icon size={16} name="microMuted" className="text-danger" />
+                  </div>
+                )}
+              </>
             )}
           </Skeleton>
         </div>
@@ -47,7 +55,7 @@ export const Participant = ({
           {profile?.name}
         </Skeleton>
       </div>
-      {!isLocal && <AudioPlayer muted={muted} stream={stream} />}
+      {!isLocal && <AudioPlayer stream={stream} />}
     </div>
   );
 };

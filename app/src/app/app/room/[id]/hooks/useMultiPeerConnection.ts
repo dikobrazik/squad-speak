@@ -26,9 +26,9 @@ export const useMultiPeerConnection = ({
   const [localStream, setLocalStream] = useState<MediaStream | undefined>(
     undefined,
   );
-  const [remoteStreams, setRemoteStreams] = useState<Map<string, MediaStream>>(
-    new Map(),
-  );
+  const [remoteStreams, setRemoteStreams] = useState<
+    Map<string, { stream: MediaStream; muted: boolean }>
+  >(new Map());
 
   useEffect(() => {
     if (!userId) return;
@@ -55,7 +55,7 @@ export const useMultiPeerConnection = ({
       onRemoteStream: (userId, stream) => {
         setRemoteStreams((prev) => {
           const newMap = new Map(prev);
-          newMap.set(userId, stream);
+          newMap.set(userId, { stream, muted: false });
           return newMap;
         });
       },
@@ -99,6 +99,26 @@ export const useMultiPeerConnection = ({
     });
     websocket.on("disconnected", (msg) => {
       rtc.closePeer(msg.userId);
+    });
+    websocket.on("muted", (msg) => {
+      setRemoteStreams((prev) => {
+        const newMap = new Map(prev);
+        const entry = newMap.get(msg.userId);
+        if (entry) {
+          newMap.set(msg.userId, { stream: entry.stream, muted: true });
+        }
+        return newMap;
+      });
+    });
+    websocket.on("unmuted", (msg) => {
+      setRemoteStreams((prev) => {
+        const newMap = new Map(prev);
+        const entry = newMap.get(msg.userId);
+        if (entry) {
+          newMap.set(msg.userId, { stream: entry.stream, muted: false });
+        }
+        return newMap;
+      });
     });
     websocket.on("invalid-password", () => {
       addToast({ title: `Invalid room password`, color: "danger" });

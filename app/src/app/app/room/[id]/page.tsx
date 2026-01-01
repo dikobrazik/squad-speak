@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import { useState } from "react";
 import { useRoom } from "@/src/hooks/useRoom";
 import { useSocketIO } from "@/src/hooks/useSocketIO";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
@@ -13,6 +14,7 @@ import { useMultiPeerConnection } from "./hooks/useMultiPeerConnection";
 export default function RoomPage() {
   const { userId } = useAuthContext();
   const roomId = String(useParams().id);
+  const [isLocalMuted, setIsLocalMuted] = useState(false);
 
   const websocket = useSocketIO(roomId, "multiuser");
 
@@ -27,7 +29,14 @@ export default function RoomPage() {
       <div className="h-full flex flex-col flex-3 p-4">
         <Chat
           dataChannel={dataChannel}
-          controls={<SelfAudioControls stream={localStream} />}
+          controls={
+            <SelfAudioControls
+              websocket={websocket}
+              stream={localStream}
+              isMuted={isLocalMuted}
+              setIsMuted={setIsLocalMuted}
+            />
+          }
         />
       </div>
       <aside className="flex flex-1 flex-col h-full justify-start border-l p-4">
@@ -36,15 +45,22 @@ export default function RoomPage() {
           {localStream && (
             <Participant
               key="local"
-              muted
+              muted={isLocalMuted}
               isLocal
               userId={String(userId)}
               stream={localStream}
             />
           )}
-          {Array.from(remoteStreams.entries()).map(([userId, stream]) => (
-            <Participant key={userId} userId={userId} stream={stream} />
-          ))}
+          {Array.from(remoteStreams.entries()).map(
+            ([userId, { stream, muted }]) => (
+              <Participant
+                key={userId}
+                userId={userId}
+                stream={stream}
+                muted={muted}
+              />
+            ),
+          )}
         </div>
       </aside>
     </div>

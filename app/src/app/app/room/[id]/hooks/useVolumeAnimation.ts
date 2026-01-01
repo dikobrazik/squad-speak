@@ -4,7 +4,7 @@ export const useVolumeAnimation = ({ stream }: { stream: MediaStream }) => {
   const bar = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!stream) return;
+    if (!stream || stream.getAudioTracks().length === 0) return;
 
     const audioContext = new AudioContext();
 

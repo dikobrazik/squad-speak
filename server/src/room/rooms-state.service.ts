@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class RoomStateService {
-  private roomsMap: Record<string, { users: Record<string, boolean> }> = {};
+  private roomsMap: Record<
+    string,
+    { users: Record<string, { muted: boolean }> }
+  > = {};
 
   addUserToRoom(roomId: string, userId: string) {
-    let isFirstUser = false;
     if (!this.roomsMap[roomId]) {
       this.roomsMap[roomId] = { users: {} };
-      isFirstUser = true;
     }
-    this.roomsMap[roomId].users[userId] = true;
-    return { isFirstUser };
+    this.roomsMap[roomId].users[userId] = { muted: false };
   }
 
   removeUserFromRoom(roomId: string, userId: string) {
@@ -20,6 +20,18 @@ export class RoomStateService {
       if (Object.keys(this.roomsMap[roomId].users).length === 0) {
         delete this.roomsMap[roomId];
       }
+    }
+  }
+
+  muteUserInRoom(roomId: string, userId: string) {
+    if (this.roomsMap[roomId] && this.roomsMap[roomId].users[userId]) {
+      this.roomsMap[roomId].users[userId].muted = true;
+    }
+  }
+
+  unmuteUserInRoom(roomId: string, userId: string) {
+    if (this.roomsMap[roomId] && this.roomsMap[roomId].users[userId]) {
+      this.roomsMap[roomId].users[userId].muted = false;
     }
   }
 
