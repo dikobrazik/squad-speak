@@ -2,13 +2,7 @@
 
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
-import {
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-} from "@heroui/modal";
+import { Modal, ModalBody, ModalContent, ModalHeader } from "@heroui/modal";
 import { Form } from "@heroui/react";
 import { useQuery } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
@@ -16,10 +10,7 @@ import { useParams, useRouter } from "next/navigation";
 import { type PropsWithChildren, useState } from "react";
 import { checkRoomPassword, getRoom } from "@/src/api";
 import { LoadingPage } from "@/src/components/LoadingPage";
-import {
-  RoomPasswordStore,
-  useRoomsPasswordsStore,
-} from "@/src/providers/RoomPasswordStore";
+import { useRoomsPasswordsStore } from "@/src/providers/RoomPasswordStore";
 
 export default function Layout({ children }: PropsWithChildren) {
   const router = useRouter();
