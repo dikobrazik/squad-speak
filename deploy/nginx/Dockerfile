@@ -1,4 +1,4 @@
-FROM owasp/modsecurity-crs:4.8.0-nginx-202411071011
+FROM owasp/modsecurity-crs:4.22.0-nginx-202601060501
 
 USER root
 
