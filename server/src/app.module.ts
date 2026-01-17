@@ -9,11 +9,13 @@ import { AppService } from './app.service';
 import { AuthorizationModule } from './authorization/authorization.module';
 import { JwtAuthGuard } from './authorization/guards/jwt.guard';
 import { Room } from './entities/Room';
+import { Session } from './entities/Session';
 import { TelegramAccount } from './entities/TelegramAccount';
 import { User } from './entities/User';
 import { EventsModule } from './events/events.module';
 import { RolesGuard } from './guards/roles.guard';
 import { RoomModule } from './room/room.module';
+import { SessionModule } from './session/session.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { TelegramAuthSessionService } from './telegram/telegram-auth-session.service';
 import { TurnModule } from './turn/turn.module';
@@ -38,7 +40,7 @@ import { UserModule } from './user/user.module';
         username: configService.get<string>('DB_USER'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_NAME'),
-        entities: [User, Room, TelegramAccount],
+        entities: [User, Room, TelegramAccount, Session],
         synchronize: true,
       }),
     }),
@@ -48,6 +50,7 @@ import { UserModule } from './user/user.module';
     UserModule,
     TurnModule,
     TelegramModule,
+    SessionModule,
   ],
   controllers: [AppController],
   providers: [

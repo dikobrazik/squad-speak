@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
+import ms from 'ms';
 
 type Session = {
   id: string;
@@ -22,7 +23,7 @@ export class TelegramAuthSessionService {
       id,
       scanned: false,
       confirmed: false,
-      expiresAt: Date.now() + 2 * 60 * 1000, // 2 минуты
+      expiresAt: Date.now() + ms('10m'), // 2 минуты
     });
 
     return id;

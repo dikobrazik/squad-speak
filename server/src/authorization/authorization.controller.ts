@@ -14,6 +14,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
+import ms from 'ms';
 import { interval, map, Observable } from 'rxjs';
 import { SessionStatus } from 'shared/types/session';
 import { Admin } from 'src/decorators/admin.decorator';
@@ -98,16 +99,21 @@ export class AuthorizationController {
     if (!session.userId) {
       return new InternalServerErrorException('User ID is missing');
     }
+    const rememberMe = session.rememberMe || false;
 
-    const [accessToken, refreshToken] = await Promise.all([
-      this.authService.generateJwtToken(session.userId),
-      this.authService.generateJwtToken(
-        session.userId,
-        session.rememberMe ? '30d' : '1min',
-      ),
-    ]);
+    const { refreshToken, sessionId, deviceId } =
+      await this.authService.generateRefreshToken(session.userId, rememberMe);
 
-    response.cookie('refreshToken', refreshToken, SECURE_COOKIE_OPTIONS);
+    const accessToken = await this.authService.generateAccessToken(
+      session.userId,
+      sessionId,
+    );
+
+    response.cookie('refreshToken', refreshToken, {
+      ...SECURE_COOKIE_OPTIONS,
+      maxAge: rememberMe ? ms('100d') : ms('3h'),
+    });
+    response.cookie('deviceId', deviceId, SECURE_COOKIE_OPTIONS);
 
     return {
       telegramId: session.telegramId,
@@ -124,24 +130,22 @@ export class AuthorizationController {
     let userId: string;
 
     const refreshToken = request.cookies['refreshToken'];
-
-    if (!refreshToken) {
-      throw new UnauthorizedException({
-        message: 'No refresh token provided',
-        error: 'no_refresh_token',
-      });
-    }
+    const deviceId = request.cookies['deviceId'];
 
     try {
       ({ userId } = await this.authService.validateRefreshToken(
-        request.cookies['refreshToken'],
+        refreshToken,
+        deviceId,
       ));
     } catch (error) {
       response.clearCookie('refreshToken');
       throw error;
     }
 
-    const accessToken = await this.authService.generateJwtToken(userId, '5m');
+    const accessToken = await this.authService.generateAccessToken(
+      userId,
+      '5m',
+    );
 
     return {
       userId,

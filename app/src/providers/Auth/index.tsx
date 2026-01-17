@@ -26,8 +26,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const { isFetched, data } = useQuery({
     queryKey: ["refreshToken"],
     queryFn: refreshToken,
-    // todo: remove
-    refetchOnWindowFocus: false,
+    refetchInterval: 4 * 60 * 1000,
+    refetchOnWindowFocus: true,
   });
 
   const needToEstablishSession = isFetched && !data;

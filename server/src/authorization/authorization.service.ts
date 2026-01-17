@@ -1,52 +1,55 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
+import { SessionService } from 'src/session/session.service';
 
 @Injectable()
 export class AuthorizationService {
   @Inject(JwtService)
   private readonly jwtService: JwtService;
+  @Inject(SessionService)
+  private readonly sessionService: SessionService;
 
-  public generateJwtToken(
-    userId: string,
-    expiresIn?: JwtSignOptions['expiresIn'],
-  ) {
+  public generateAccessToken(userId: string, sessionId: string) {
     return this.jwtService.signAsync(
-      { sub: userId },
-      { expiresIn: expiresIn || '1h' },
+      { sub: userId, sid: `session_${sessionId}` },
+      { expiresIn: '5m' },
     );
   }
 
-  public async validateRefreshToken(token: string) {
-    let userId: string;
-    try {
-      ({ sub: userId } = await this.jwtService.verifyAsync(token, {
-        ignoreExpiration: false,
-      }));
-    } catch (error) {
-      console.log(error);
+  public generateRefreshToken(userId: string, rememberMe: boolean) {
+    return this.sessionService.createSession(userId, rememberMe);
+  }
 
-      if (error instanceof Error && error.name === 'TokenExpiredError') {
-        throw new UnauthorizedException({
-          message: 'Refresh token is expired',
-          error: 'refresh_token_expired',
-        });
-      }
+  public async validateRefreshToken(
+    token: string | undefined,
+    deviceId: string,
+  ) {
+    if (!token) {
+      throw new UnauthorizedException({
+        message: 'No refresh token provided',
+        error: 'no_refresh_token',
+      });
+    }
 
+    const session = await this.sessionService.getSessionForToken(
+      token,
+      deviceId,
+    );
+
+    if (!session) {
       throw new UnauthorizedException({
         message: 'Token is invalid',
         error: 'refresh_token_invalid',
       });
     }
 
-    // const session = await this.sessionService.getSession(token, deviceId);
+    if (session.expires_at < new Date()) {
+      throw new UnauthorizedException({
+        message: 'Refresh token is expired',
+        error: 'refresh_token_expired',
+      });
+    }
 
-    // if (!session) {
-    //   throw new UnauthorizedException({
-    //     message: 'Where is no such session',
-    //     error: 'no_session',
-    //   });
-    // }
-
-    return { userId };
+    return { userId: session.user_id };
   }
 }
