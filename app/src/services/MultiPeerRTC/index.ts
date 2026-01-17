@@ -34,11 +34,11 @@ export class MultiPeerRTC {
 
   /* ---------- Local media ---------- */
 
-  async setLocalStream(stream: MediaStream) {
+  setLocalStream(stream: MediaStream) {
     this.localStream = stream;
 
     for (const pc of this.peers.values()) {
-      stream.getAudioTracks().forEach((track) => {
+      this.localStream.getAudioTracks().forEach((track) => {
         pc.addTrack(track, stream);
       });
     }
@@ -207,6 +207,10 @@ export class MultiPeerRTC {
   }
 
   closeAll() {
+    this.localStream?.getAudioTracks().forEach((track) => {
+      track.stop();
+    });
+
     for (const userId of this.peers.keys()) {
       this.closePeer(userId);
     }

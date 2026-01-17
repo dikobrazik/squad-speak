@@ -64,8 +64,10 @@ export const useMultiPeerConnection = ({
       },
     });
 
+    let stream: MediaStream;
+
     (async () => {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      stream = await navigator.mediaDevices.getUserMedia({
         video: false,
         audio: true,
       });
@@ -75,7 +77,7 @@ export const useMultiPeerConnection = ({
       });
 
       setLocalStream(stream);
-      await rtc.setLocalStream(stream);
+      rtc.setLocalStream(stream);
 
       websocket.connect();
     })();

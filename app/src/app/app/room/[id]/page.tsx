@@ -8,7 +8,6 @@ import { useAuthContext } from "@/src/providers/Auth/hooks";
 import { Chat } from "./components/Chat";
 import { Participant } from "./components/Participant";
 import { SelfAudioControls } from "./components/SelfAudioControls";
-import { UsersCount } from "./components/UsersCount";
 import { useMultiPeerConnection } from "./hooks/useMultiPeerConnection";
 
 export default function RoomPage() {
