@@ -1,8 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Icon } from "@/src/components/Icon";
 import { Providers } from "@/src/providers";
 import { RoomPasswordStore } from "@/src/providers/RoomPasswordStore";
-import { Sidebar } from "./components/Sidebar";
 import css from "./Layout.module.scss";
 
 export default function Layout({
@@ -12,8 +12,8 @@ export default function Layout({
     <Providers>
       <RoomPasswordStore>
         <div className="h-screen overflow-y-hidden">
-          <nav className="border-b-1 p-4">
-            <Link href="/">
+          <nav className="border-b-1 p-4 justify-between flex items-center">
+            <Link href="/app">
               <Image
                 src="/assets/logo.svg"
                 alt="SquadSpeak Logo"
@@ -22,11 +22,12 @@ export default function Layout({
                 priority
               />
             </Link>
+
+            <Link href="/app/settings/profile" className="underline">
+              <Icon name="gearThin" />
+            </Link>
           </nav>
-          <div className={css.content}>
-            <Sidebar className="w-1/4" />
-            <div className="w-3/4 h-full">{children}</div>
-          </div>
+          <div className={css.content}>{children}</div>
         </div>
       </RoomPasswordStore>
     </Providers>

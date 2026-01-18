@@ -21,7 +21,6 @@ export interface MultiPeerRTCOptions {
 
 export class MultiPeerRTC {
   private peers = new Map<UserId, RTCPeerConnection>();
-  private dataChannels = new Map<UserId, RTCDataChannel>();
   private localStream?: MediaStream;
 
   private iceServers: RTCIceServer[] = structuredClone(ICE_SERVERS);

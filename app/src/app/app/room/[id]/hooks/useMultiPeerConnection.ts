@@ -11,6 +11,7 @@ import { useAuthContext } from "@/src/providers/Auth/hooks";
 import { DataChannel } from "@/src/services/DataChannel";
 import { MultiPeerRTC } from "@/src/services/MultiPeerRTC";
 import { SoundService } from "@/src/services/SoundService";
+import { useMediaStream } from "./useMediaStream";
 
 export const useMultiPeerConnection = ({
   websocket,
@@ -31,8 +32,10 @@ export const useMultiPeerConnection = ({
     Map<string, { stream: MediaStream; muted: boolean }>
   >(new Map());
 
+  const mediaStream = useMediaStream();
+
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !mediaStream) return;
 
     new SoundService().playJoinSound();
 
@@ -64,21 +67,13 @@ export const useMultiPeerConnection = ({
       },
     });
 
-    let stream: MediaStream;
-
     (async () => {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: false,
-        audio: true,
-      });
-
       await getTurnServers().then((response) => {
         rtc.enrichIceServers(response.iceServers);
       });
 
-      setLocalStream(stream);
-      rtc.setLocalStream(stream);
-
+      setLocalStream(mediaStream);
+      rtc.setLocalStream(mediaStream);
       websocket.connect();
     })();
 
@@ -138,7 +133,7 @@ export const useMultiPeerConnection = ({
       websocket.disconnect();
       new SoundService().playLeaveSound();
     };
-  }, [userId, websocket]);
+  }, [userId, mediaStream, websocket]);
 
   return { dataChannel, localStream, remoteStreams };
 };
