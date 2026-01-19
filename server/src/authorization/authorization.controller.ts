@@ -3,18 +3,14 @@ import {
   Get,
   Inject,
   InternalServerErrorException,
-  MessageEvent,
-  NotFoundException,
   Param,
   Post,
   Req,
   Res,
-  Sse,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
 import ms from 'ms';
-import { interval, map, Observable } from 'rxjs';
 import { SessionStatus } from 'shared/types/session';
 import { Admin } from 'src/decorators/admin.decorator';
 import { TelegramAuthSessionService } from 'src/telegram/telegram-auth-session.service';
@@ -60,44 +56,41 @@ export class AuthorizationController {
     };
   }
 
-  @Sse('status/stream/:id')
-  getStatus(@Param('id') id: string): Observable<MessageEvent> {
-    return interval(1000).pipe(
-      map(() => {
-        const session = this.telegramAuthSessionService.getSession(id);
-
-        if (!session) {
-          return { status: SessionStatus.EXPIRED };
-        }
-
-        if (!session.scanned) {
-          return { status: SessionStatus.PENDING };
-        }
-
-        if (!session.confirmed) {
-          return { status: SessionStatus.SCANNED };
-        }
-
-        return { status: SessionStatus.CONFIRMED };
-      }),
-      map((data) => ({ data })),
-    );
-  }
-
   @Get('/status/:id')
   async getSessionStatus(
     @Param('id') id: string,
     @Res({ passthrough: true }) response: Response,
-  ) {
+  ): Promise<
+    | { status: SessionStatus.EXPIRED }
+    | {
+        status: SessionStatus.SCANNED | SessionStatus.PENDING;
+        sessionId: string;
+      }
+    | {
+        status: SessionStatus.CONFIRMED;
+        telegramId: number;
+        userId: string;
+        accessToken: string;
+      }
+  > {
     const session = this.telegramAuthSessionService.getSession(id);
 
     if (!session) {
-      return new NotFoundException();
+      return { status: SessionStatus.EXPIRED };
+    }
+
+    if (!session.scanned) {
+      return { status: SessionStatus.PENDING, sessionId: session.id };
+    }
+
+    if (!session.confirmed) {
+      return { status: SessionStatus.SCANNED, sessionId: session.id };
     }
 
     if (!session.userId) {
-      return new InternalServerErrorException('User ID is missing');
+      throw new InternalServerErrorException('User ID is missing');
     }
+
     const rememberMe = session.rememberMe || false;
 
     const { refreshToken, sessionId, deviceId } =
@@ -110,12 +103,14 @@ export class AuthorizationController {
 
     response.cookie('refreshToken', refreshToken, {
       ...SECURE_COOKIE_OPTIONS,
-      maxAge: rememberMe ? ms('100d') : ms('3h'),
+      maxAge: (rememberMe ? ms('100d') : ms('3h')) / 1000,
     });
+
     response.cookie('deviceId', deviceId, SECURE_COOKIE_OPTIONS);
 
     return {
-      telegramId: session.telegramId,
+      status: SessionStatus.CONFIRMED,
+      telegramId: session.telegramId!,
       userId: session.userId,
       accessToken,
     };

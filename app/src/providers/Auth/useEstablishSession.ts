@@ -1,10 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
+import ms from "ms";
+import { useEffect } from "react";
 import { SessionStatus } from "shared/types/session";
-import type { SseData } from "shared/types/session/sse";
 import { getAuthQr, getSession, setToken } from "@/src/api";
-import { BASE_API_URL } from "@/src/config";
-import { useSse } from "@/src/hooks/useSse";
 
 type Options = {
   enabled?: boolean;
@@ -17,45 +15,32 @@ export const useEstablishSession = ({
   enabled,
   setUserId,
 }: Options) => {
-  const [sessionId, setSessionId] = useState<string | null>(null);
-
   const { data: qrData, refetch: refetchQr } = useQuery({
-    enabled: enabled && !sessionId,
+    enabled: enabled,
     queryKey: ["qr-auth"],
     queryFn: getAuthQr,
+    refetchInterval: ms("10m"), // refresh QR code every 10 minutes
   });
 
-  const onSSEMessage = useCallback((data: SseData) => {
-    if (data.status === SessionStatus.EXPIRED) {
-      setSessionId(null);
-      refetchQr();
-    }
-  }, []);
-
-  const { data } = useSse<SseData>(
-    `${BASE_API_URL}/authorization/status/stream/${sessionId}`,
-    {
-      onMessage: onSSEMessage,
-      enabled: enabled && !!sessionId,
-    },
-  );
+  const sessionId = qrData?.sessionId || null;
 
   const { data: sessionData } = useQuery({
-    enabled: data?.status === SessionStatus.CONFIRMED,
+    enabled: !!qrData?.sessionId,
     queryKey: ["get-session", { sessionId }],
     queryFn: () => getSession(sessionId!),
+    refetchInterval: 500,
   });
 
   useEffect(() => {
-    if (sessionData) {
+    if (sessionData && sessionData.status === SessionStatus.CONFIRMED) {
       setToken(sessionData.accessToken);
       setUserId(sessionData.userId);
     }
   }, [sessionData]);
 
   useEffect(() => {
-    if (qrData?.sessionId) {
-      setSessionId(qrData.sessionId);
+    if (sessionData?.status === SessionStatus.EXPIRED) {
+      refetchQr();
     }
   }, [qrData?.sessionId]);
 
@@ -65,5 +50,5 @@ export const useEstablishSession = ({
     qrUrl += "_rememberMe";
   }
 
-  return { qrUrl, status: data?.status };
+  return { qrUrl, status: sessionData?.status };
 };

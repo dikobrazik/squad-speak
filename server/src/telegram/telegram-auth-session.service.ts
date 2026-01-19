@@ -23,31 +23,36 @@ export class TelegramAuthSessionService {
       id,
       scanned: false,
       confirmed: false,
-      expiresAt: Date.now() + ms('10m'), // 2 минуты
+      expiresAt: Date.now() + ms('10m'),
     });
 
     return id;
   }
 
-  confirmSession(sessionId: string, telegramId: number) {
+  confirmSession(sessionId: string) {
     const session = this.getSession(sessionId);
-    if (!session) return false;
-
     session.confirmed = true;
+    return true;
+  }
+
+  setSessionTelegramId(sessionId: string, telegramId: number) {
+    const session = this.getSession(sessionId);
     session.telegramId = telegramId;
     return true;
   }
 
   getSession(sessionId: string) {
     const session = this.sessions.get(sessionId);
-    if (!session || session.expiresAt < Date.now()) return null;
+
+    if (!session) throw new Error('Session not found');
+
+    if (session.expiresAt < Date.now()) throw new Error('Session expired');
+
     return session;
   }
 
   markSessionScanned(sessionId: string) {
     const session = this.getSession(sessionId);
-    if (session) {
-      session.scanned = true;
-    }
+    session.scanned = true;
   }
 }

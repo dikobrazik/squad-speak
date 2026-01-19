@@ -22,10 +22,13 @@ export class TelegramService {
     const firstName = user.first_name ?? '';
     const lastName = user.last_name ?? '';
 
+    this.telegramAuthSessionService.setSessionTelegramId(sessionId, telegramId);
+
     const session = this.telegramAuthSessionService.getSession(sessionId);
-    if (!session || session.telegramId !== telegramId) {
+
+    if (!session) {
       throw new NotFoundException({
-        message: 'Session not found or mismatched telegramId',
+        message: 'Session not found',
         error: 'telegram_auth_session_not_found',
       });
     }
@@ -55,8 +58,6 @@ export class TelegramService {
 
       session.userId = userEntity.id;
     }
-
-    console.log('telegram account:', account);
 
     await this.telegramAccountRepository.save(account);
   }

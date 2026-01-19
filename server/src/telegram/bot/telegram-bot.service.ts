@@ -62,21 +62,16 @@ export class TelegramBotService {
       console.log('Action received:', ctx.match[0]);
 
       const sessionId = ctx.match[1];
-      const telegramId = ctx.from.id;
 
-      const ok = await this.telegramAuthSessionService.confirmSession(
-        sessionId,
-        telegramId,
-      );
+      await this.telegramService.linkTelegramAccount(sessionId, ctx.from);
+
+      const ok = this.telegramAuthSessionService.confirmSession(sessionId);
 
       if (!ok) {
         return ctx.reply('❌ Сессия устарела или недействительна');
       }
 
-      await this.telegramService.linkTelegramAccount(sessionId, ctx.from);
-
-      await ctx.reply('✅ Вход выполнен. Можешь закрыть Telegram.');
-      await ctx.answerCbQuery();
+      return ctx.reply('✅ Вход выполнен. Можешь закрыть Telegram.');
     });
 
     return this.bot.createWebhook({

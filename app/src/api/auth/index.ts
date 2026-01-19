@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { SessionStatus } from "shared/types/session";
 
 export const createGuest = () =>
   axios
@@ -10,11 +11,14 @@ export const getAuthQr = () =>
     .get<{ sessionId: string; qrUrl: string }>("/authorization/qr")
     .then((response) => response.data);
 
-type AuthResult = {
-  telegramId: number;
-  userId: string;
-  accessToken: string;
-};
+type AuthResult =
+  | { status: Exclude<SessionStatus, SessionStatus.CONFIRMED> }
+  | {
+      status: SessionStatus.CONFIRMED;
+      telegramId: number;
+      userId: string;
+      accessToken: string;
+    };
 
 export const getSession = (sessionId: string) =>
   axios
