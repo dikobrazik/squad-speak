@@ -57,9 +57,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <HeroProvider>
-          <main className="orange-light text-foreground min-h-screen">
-            {children}
-          </main>
+          <main className="light text-foreground min-h-screen">{children}</main>
         </HeroProvider>
       </body>
     </html>

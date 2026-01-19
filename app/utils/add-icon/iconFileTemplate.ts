@@ -12,6 +12,7 @@ export const ${kebabTo(iconName, "pascal")}Icon = (props: IconProps) => (
       `<svg
     role="img"
     aria-label="${iconName} icon"
+    viewBox="0 0 24 24"
     width={props.size}
     height={props.size}
     fillRule="evenodd"

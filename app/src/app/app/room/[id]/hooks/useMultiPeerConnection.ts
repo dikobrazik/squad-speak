@@ -9,10 +9,12 @@ import type { Socket } from "socket.io-client";
 import { getTurnServers } from "@/src/api";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
 import { DataChannel } from "@/src/services/DataChannel";
+import { deviceSettingsService } from "@/src/services/DeviceSettings";
 import { MultiPeerRTC } from "@/src/services/MultiPeerRTC";
 import { SoundService } from "@/src/services/SoundService";
 import { useMediaStream } from "./useMediaStream";
 
+// FIXME как же мне эта штука не нравится...
 export const useMultiPeerConnection = ({
   websocket,
 }: {
@@ -25,9 +27,7 @@ export const useMultiPeerConnection = ({
   const { userId } = useAuthContext();
   const dataChannel = useMemo(() => new DataChannel(userId), [userId]);
 
-  const [localStream, setLocalStream] = useState<MediaStream | undefined>(
-    undefined,
-  );
+  const [rtc, setRtc] = useState<MultiPeerRTC | null>(null);
   const [remoteStreams, setRemoteStreams] = useState<
     Map<string, { stream: MediaStream; muted: boolean }>
   >(new Map());
@@ -35,7 +35,7 @@ export const useMultiPeerConnection = ({
   const mediaStream = useMediaStream();
 
   useEffect(() => {
-    if (!userId || !mediaStream) return;
+    if (!userId) return;
 
     new SoundService().playJoinSound();
 
@@ -67,13 +67,22 @@ export const useMultiPeerConnection = ({
       },
     });
 
+    setRtc(rtc);
+
     (async () => {
+      const defaultStream = await navigator.mediaDevices.getUserMedia({
+        video: false,
+        audio: {
+          deviceId: deviceSettingsService.getAudioInputDevice() || undefined,
+        },
+      });
+
       await getTurnServers().then((response) => {
         rtc.enrichIceServers(response.iceServers);
       });
 
-      setLocalStream(mediaStream);
-      rtc.setLocalStream(mediaStream);
+      rtc.setLocalStream(defaultStream);
+
       websocket.connect();
     })();
 
@@ -133,7 +142,13 @@ export const useMultiPeerConnection = ({
       websocket.disconnect();
       new SoundService().playLeaveSound();
     };
-  }, [userId, mediaStream, websocket]);
+  }, [userId, websocket]);
 
-  return { dataChannel, localStream, remoteStreams };
+  useEffect(() => {
+    if (rtc && mediaStream) {
+      rtc.replaceAudioTrack(mediaStream);
+    }
+  }, [rtc, mediaStream]);
+
+  return { dataChannel, localStream: mediaStream, remoteStreams };
 };

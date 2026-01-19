@@ -8,6 +8,7 @@ export const GearThinIcon = (props: IconProps) => (
     height={props.size}
     fillRule="evenodd"
     clipRule="evenodd"
+    viewBox="0 0 24 24"
     color={props.color}
     xmlns="http://www.w3.org/2000/svg"
   >

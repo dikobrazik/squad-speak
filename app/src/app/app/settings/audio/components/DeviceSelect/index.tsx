@@ -16,6 +16,7 @@ export const DeviceSelect = ({
   const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
+  // FIXME: Duplicate of useDevicesList hook
   const updateDevicesList = async () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
 

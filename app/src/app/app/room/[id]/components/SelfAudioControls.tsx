@@ -1,12 +1,16 @@
 import { Button } from "@heroui/button";
-import { useState } from "react";
+import { Listbox, ListboxItem } from "@heroui/listbox";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { useEffect, useState } from "react";
 import type {
   MultiRoomClientToServerEvents,
   MultiRoomServerToClientEvents,
 } from "shared/types/websockets/multi-room";
 import type { Socket } from "socket.io-client";
 import { Icon } from "@/src/components/Icon";
+import { useDevicesList } from "@/src/hooks/useDevicesList";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
+import { deviceSettingsService } from "@/src/services/DeviceSettings";
 
 export const SelfAudioControls = ({
   stream,
@@ -22,6 +26,8 @@ export const SelfAudioControls = ({
   isMuted: boolean;
   setIsMuted: (muted: boolean) => void;
 }) => {
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | null>(null);
+  const inputDevices = useDevicesList("audioinput");
   const { userId } = useAuthContext();
 
   const onToggleMuteClick = () => {
@@ -35,15 +41,53 @@ export const SelfAudioControls = ({
     }
   };
 
+  useEffect(() => {
+    const currentDeviceId = deviceSettingsService.getAudioInputDevice();
+    setSelectedDeviceId(currentDeviceId);
+
+    deviceSettingsService.addEventListener("input-device-changed", (event) => {
+      const newDeviceId = event.deviceId;
+      setSelectedDeviceId(newDeviceId || null);
+    });
+  }, []);
+
+  const onSelectionChange = (selection: "all" | Set<number | string>) => {
+    deviceSettingsService.setAudioInputDevice(String([...selection][0]));
+  };
+
   return (
     <div>
-      <Button
-        isIconOnly
-        onPress={onToggleMuteClick}
-        color={isMuted ? "danger" : "default"}
-      >
-        {isMuted ? <Icon name="micro" /> : <Icon name="microMuted" />}
-      </Button>
+      <Popover>
+        <PopoverTrigger>
+          <div className="flex border-1 border-primary rounded-medium">
+            <Button
+              isIconOnly
+              onPress={onToggleMuteClick}
+              color={isMuted ? "danger" : "default"}
+            >
+              {isMuted ? <Icon name="micro" /> : <Icon name="microMuted" />}
+            </Button>
+
+            <div className="p-2 flex items-center">
+              <Icon name="arrowUp" size={12} color="primary" />
+            </div>
+          </div>
+        </PopoverTrigger>
+        <PopoverContent>
+          <Listbox
+            selectionBehavior="replace"
+            selectedKeys={[selectedDeviceId].filter((value) => value !== null)}
+            selectionMode="single"
+            onSelectionChange={onSelectionChange}
+          >
+            {inputDevices.map((device) => (
+              <ListboxItem key={device.deviceId}>
+                {device.label || "Unnamed Device"}
+              </ListboxItem>
+            ))}
+          </Listbox>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 };

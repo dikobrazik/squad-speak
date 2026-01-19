@@ -31,6 +31,29 @@ export class MultiPeerRTC {
     this.iceServers.push(...servers);
   }
 
+  /* ---------- Change media stream ---------- */
+
+  replaceAudioTrack(stream: MediaStream) {
+    const newTrack = stream.getAudioTracks()[0];
+
+    if (!newTrack) {
+      console.warn("No audio track in the provided stream");
+      return;
+    }
+
+    this.localStream?.getAudioTracks().forEach((oldTrack) => {
+      for (const pc of this.peers.values()) {
+        const sender = pc.getSenders().find((s) => s.track === oldTrack);
+        if (sender) {
+          sender.replaceTrack(newTrack);
+        }
+      }
+      oldTrack.stop();
+    });
+
+    this.localStream = stream;
+  }
+
   /* ---------- Local media ---------- */
 
   setLocalStream(stream: MediaStream) {

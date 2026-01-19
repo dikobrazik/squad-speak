@@ -29,6 +29,8 @@ export const useMediaStream = () => {
             });
             break;
           case "NotFoundError":
+            deviceSettingsService.resetAudioInputDevice();
+
             addToast({
               title: "No microphone found",
               description:

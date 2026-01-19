@@ -1,8 +1,8 @@
 export class InputDeviceChangedEvent extends Event {
   public static type: "input-device-changed";
-  public deviceId: string;
+  public deviceId: string | undefined;
 
-  constructor(deviceId: string) {
+  constructor(deviceId: string | undefined) {
     super(InputDeviceChangedEvent.type);
 
     this.deviceId = deviceId;
@@ -10,6 +10,11 @@ export class InputDeviceChangedEvent extends Event {
 }
 
 class DeviceSettingsService extends EventTarget {
+  resetAudioInputDevice() {
+    this.dispatchEvent(new InputDeviceChangedEvent(undefined));
+    localStorage.removeItem("audioInputDeviceId");
+  }
+
   setAudioInputDevice(deviceId: string) {
     this.dispatchEvent(new InputDeviceChangedEvent(deviceId));
     localStorage.setItem("audioInputDeviceId", deviceId);
