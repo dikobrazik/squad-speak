@@ -3,9 +3,9 @@
 import { Skeleton } from "@heroui/skeleton";
 import { cn } from "@heroui/theme";
 import { useQuery } from "@tanstack/react-query";
+import ms from "ms";
 import { getRooms } from "@/src/api";
 import { ExternalImage } from "@/src/components/ExternalImage";
-import { IS_DEV } from "@/src/config";
 import { useProfile } from "@/src/hooks/useProfile";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
 import { CreateRoomModal } from "./CreateRoomModal";
@@ -19,7 +19,8 @@ export const Sidebar = ({ className }: { className?: string }) => {
   const { data } = useQuery({
     queryKey: ["rooms"],
     queryFn: getRooms,
-    refetchInterval: IS_DEV ? false : 10_000,
+    refetchInterval: ms("10s"),
+    refetchOnWindowFocus: true,
   });
 
   return (

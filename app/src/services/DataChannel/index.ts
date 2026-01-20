@@ -6,19 +6,14 @@ export type ChatMessage = {
 };
 
 export class MessageEvent extends CustomEvent<ChatMessage> {
-  constructor(id: string, from: string, data: string, createdAt: number) {
-    super("message", { detail: { id, from, data, createdAt } });
+  constructor(message: ChatMessage) {
+    super("message", { detail: message });
   }
 }
 
 export class DataChannel extends EventTarget {
   private dataChannels = new Map<string, RTCDataChannel>();
-  private messageHistory: {
-    id: string;
-    from: string;
-    data: string;
-    createdAt: number;
-  }[] = [];
+  private messageHistory: ChatMessage[] = [];
 
   constructor(private userId: string) {
     super();
@@ -32,25 +27,25 @@ export class DataChannel extends EventTarget {
   addDataChannel(userId: string, dc: RTCDataChannel) {
     this.dataChannels.set(userId, dc);
 
-    // this.sendMessageHistory(dc);
+    dc.addEventListener("open", () => {
+      this.sendMessageHistory(dc);
+    });
 
     dc.addEventListener("message", (event) => {
       const eventData = JSON.parse(event.data);
 
       if (eventData.type === "message") {
         this.dispatchEvent(
-          new MessageEvent(
-            eventData.id,
-            userId,
-            eventData.data,
-            eventData.createdAt,
-          ),
+          new MessageEvent({
+            id: eventData.id,
+            from: userId,
+            data: eventData.data,
+            createdAt: eventData.createdAt,
+          }),
         );
       } else if (eventData.type === "history") {
         for (const msg of eventData.data) {
-          this.dispatchEvent(
-            new MessageEvent(msg.id, msg.from, msg.data, msg.createdAt),
-          );
+          this.dispatchEvent(new MessageEvent(msg));
         }
       }
     });
@@ -60,7 +55,12 @@ export class DataChannel extends EventTarget {
     const messageId = crypto.randomUUID();
 
     this.dispatchEvent(
-      new MessageEvent(messageId, this.userId, data, Date.now()),
+      new MessageEvent({
+        id: messageId,
+        from: this.userId,
+        data,
+        createdAt: Date.now(),
+      }),
     );
 
     for (const dc of this.dataChannels.values()) {
