@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery } from "@tanstack/react-query";
 import ms from "ms";
 import { useEffect } from "react";
 import { SessionStatus } from "shared/types/session";
@@ -23,11 +23,13 @@ export const useEstablishSession = ({
   });
 
   const sessionId = qrData?.sessionId || null;
+  const hasSessionId = Boolean(sessionId);
 
   const { data: sessionData } = useQuery({
-    enabled: !!qrData?.sessionId,
+    enabled: (query) =>
+      hasSessionId && query.state.data?.status !== SessionStatus.CONFIRMED,
     queryKey: ["get-session", { sessionId }],
-    queryFn: () => getSession(sessionId!),
+    queryFn: sessionId ? () => getSession(sessionId) : skipToken,
     refetchInterval: 500,
   });
 
