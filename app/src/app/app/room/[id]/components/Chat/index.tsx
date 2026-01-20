@@ -5,7 +5,8 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 import { getProfilePhotoUrl } from "@/src/api/telegram";
 import { ExternalImage } from "@/src/components/ExternalImage";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
-import type { DataChannel, MessageEvent } from "@/src/services/DataChannel";
+import type { DataChannel } from "@/src/services/DataChannel";
+import { useMessages } from "../../hooks/useMessages";
 
 export const Chat = ({
   dataChannel,
@@ -17,16 +18,12 @@ export const Chat = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const { userId } = useAuthContext();
 
-  const [messages, setMessages] = useState<
-    { id: string; message: string; from: string }[]
-  >([]);
+  const { messages, add: addMessage } = useMessages();
   const [value, setValue] = useState("");
 
   useEffect(() => {
     dataChannel.addEventListener("message", (message) => {
-      const { id, from, data } = message;
-
-      setMessages((prev) => [...prev, { id, message: data, from }]);
+      addMessage(message);
 
       requestAnimationFrame(() => {
         if (containerRef.current) {
@@ -55,7 +52,7 @@ export const Chat = ({
           className="flex flex-col h-full w-full p-4 overflow-y-auto scroll-smooth"
           ref={containerRef}
         >
-          {messages.map(({ id, message, from }) => (
+          {messages.map(({ id, data, from }) => (
             <div
               key={`${id}`}
               className={cn("flex gap-2 items-center max-w-3/4  mb-2", {
@@ -68,7 +65,7 @@ export const Chat = ({
                 width={40}
                 height={40}
               />
-              <div className="bg-gray-200 p-2 rounded">{message}</div>
+              <div className="bg-gray-200 p-2 rounded">{data}</div>
             </div>
           ))}
         </div>

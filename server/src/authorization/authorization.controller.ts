@@ -103,7 +103,7 @@ export class AuthorizationController {
 
     response.cookie('refreshToken', refreshToken, {
       ...SECURE_COOKIE_OPTIONS,
-      maxAge: (rememberMe ? ms('100d') : ms('3h')) / 1000,
+      maxAge: rememberMe ? ms('100d') : ms('3h'),
     });
 
     response.cookie('deviceId', deviceId, SECURE_COOKIE_OPTIONS);
