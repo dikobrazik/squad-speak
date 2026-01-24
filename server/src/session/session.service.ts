@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 import ms from 'ms';
 import { Session } from 'src/entities/Session';
-import { Repository } from 'typeorm';
+import { LessThan, MoreThan, Repository } from 'typeorm';
 import { generateRefreshToken, hashToken } from './utils';
 
 @Injectable()
@@ -52,5 +53,36 @@ export class SessionService {
     });
 
     return session;
+  }
+
+  public async getActiveSessions(userId: string) {
+    const sessions = await this.sessionRepository.find({
+      where: { user_id: userId, expires_at: MoreThan(new Date()) },
+      order: { last_used_at: 'DESC' },
+    });
+
+    return sessions.map((session) => ({
+      id: session.id,
+      deviceId: session.device_id,
+      createdAt: session.created_at,
+      lastActiveAt: session.last_used_at,
+    }));
+  }
+
+  public removeSession(sessionId: string) {
+    return this.sessionRepository.delete({
+      id: sessionId,
+    });
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_1AM)
+  handleCron() {
+    this.sessionRepository
+      .delete({
+        expires_at: LessThan(new Date()),
+      })
+      .then((result) => {
+        console.log(`Deleted ${result.affected} expired sessions`);
+      });
   }
 }

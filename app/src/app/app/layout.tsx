@@ -23,7 +23,7 @@ export default function Layout({
               />
             </Link>
 
-            <Link href="/app/settings/profile" className="underline">
+            <Link href="/app/settings" className="underline">
               <Icon name="gearThin" />
             </Link>
           </nav>

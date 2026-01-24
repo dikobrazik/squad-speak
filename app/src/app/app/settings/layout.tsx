@@ -25,7 +25,7 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
   return (
     <>
       <div className="flex flex-col p-3 border-r-1">
-        <SidebarLink href="/app/settings/profile">Profile</SidebarLink>
+        <SidebarLink href="/app/settings">Profile</SidebarLink>
         <SidebarLink href="/app/settings/audio">Audio</SidebarLink>
         <SidebarLink href="/app/settings/sessions">Active sessions</SidebarLink>
       </div>

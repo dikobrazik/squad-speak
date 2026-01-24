@@ -9,6 +9,6 @@
   grid-row-gap: 0px;
 
   &>* {
-    height: 100%;
+    height: calc(100vh - 105px);
   }
 }
