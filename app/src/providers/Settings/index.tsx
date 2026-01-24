@@ -8,7 +8,6 @@ import {
   useEffect,
 } from "react";
 import { getUserSettings, type Settings } from "@/src/api";
-import { soundService } from "@/src/services/SoundService";
 
 const defaultSettings: Settings = {
   systemSounds: true,
@@ -26,9 +25,13 @@ export const SettingsProvider = ({ children }: PropsWithChildren) => {
   });
 
   useEffect(() => {
-    if (data) {
-      if (!data.systemSounds) soundService.mute();
-    }
+    (async () => {
+      if (data) {
+        const { soundService } = await import("../../services/SoundService");
+
+        if (!data.systemSounds) soundService.mute();
+      }
+    })();
   }, [data]);
 
   return (
