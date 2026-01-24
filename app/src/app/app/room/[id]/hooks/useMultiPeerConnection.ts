@@ -11,7 +11,7 @@ import { useAuthContext } from "@/src/providers/Auth/hooks";
 import { DataChannel } from "@/src/services/DataChannel";
 import { deviceSettingsService } from "@/src/services/DeviceSettings";
 import { MultiPeerRTC } from "@/src/services/MultiPeerRTC";
-import { SoundService } from "@/src/services/SoundService";
+import { soundService } from "@/src/services/SoundService";
 import { useMediaStream } from "./useMediaStream";
 
 // FIXME как же мне эта штука не нравится...
@@ -37,7 +37,7 @@ export const useMultiPeerConnection = ({
   useEffect(() => {
     if (!userId) return;
 
-    new SoundService().playJoinSound();
+    soundService.playJoinSound();
 
     const rtc = new MultiPeerRTC({
       dataChannel,
@@ -104,11 +104,11 @@ export const useMultiPeerConnection = ({
       await rtc.handleIce(msg.from, msg.data);
     });
     websocket.on("connected", (msg) => {
-      new SoundService().playJoinSound();
+      soundService.playJoinSound();
       rtc.closePeer(msg.userId);
     });
     websocket.on("disconnected", (msg) => {
-      new SoundService().playLeaveSound();
+      soundService.playLeaveSound();
       rtc.closePeer(msg.userId);
     });
     websocket.on("muted", (msg) => {
@@ -140,7 +140,7 @@ export const useMultiPeerConnection = ({
       rtc.closeAll();
       websocket.offAny();
       websocket.disconnect();
-      new SoundService().playLeaveSound();
+      soundService.playLeaveSound();
     };
   }, [userId, websocket]);
 

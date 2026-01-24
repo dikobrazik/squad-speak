@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@heroui/react";
 import { Spinner } from "@heroui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
@@ -68,16 +69,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
             </div>
           )}
         </div>
-        <label className="mt-4 block text-center">
-          Remember me:
-          <input
-            type="checkbox"
-            onChange={(e) => {
-              setRememberMe(e.target.checked);
-            }}
-            className="ml-2"
-          />
-        </label>
+        <div className="mt-4 flex items-center justify-center gap-2">
+          <Checkbox isSelected={rememberMe} onValueChange={setRememberMe}>
+            Remember me:
+          </Checkbox>
+        </div>
       </div>
     );
   }

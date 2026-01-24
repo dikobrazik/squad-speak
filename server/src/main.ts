@@ -26,7 +26,7 @@ async function bootstrap() {
     exclude: [],
   });
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.use(cookieParser());
 
   app.use(await app.get(TelegramBotService).createBot());

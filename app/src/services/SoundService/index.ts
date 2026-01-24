@@ -21,11 +21,23 @@ type Note =
 export class SoundService {
   private ctx: AudioContext;
   private masterGain: GainNode;
+  private muteGain: GainNode;
 
   constructor() {
     this.ctx = new AudioContext();
     this.masterGain = this.ctx.createGain();
-    this.masterGain.connect(this.ctx.destination);
+    this.muteGain = this.ctx.createGain();
+
+    this.masterGain.connect(this.muteGain);
+    this.muteGain.connect(this.ctx.destination);
+  }
+
+  mute() {
+    this.muteGain.gain.value = 0;
+  }
+
+  unmute() {
+    this.muteGain.gain.value = 1;
   }
 
   playJoinSound(duration: number = 0.5) {
@@ -110,3 +122,5 @@ export class SoundService {
     return frequency;
   }
 }
+
+export const soundService = new SoundService();

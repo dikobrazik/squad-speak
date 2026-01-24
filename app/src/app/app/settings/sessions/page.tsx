@@ -29,7 +29,7 @@ export default function SessionsSettingsPage() {
       refetch();
 
       addToast({
-        title: "Session  invalidated",
+        title: "Session invalidated",
         color: "success",
       });
     },
@@ -42,7 +42,7 @@ export default function SessionsSettingsPage() {
   });
 
   if (isLoading) {
-    return <LoadingPage />;
+    return <LoadingPage height="full" />;
   }
 
   return (
