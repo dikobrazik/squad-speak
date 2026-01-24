@@ -11,6 +11,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { getUsersList } from "@/src/api";
 import { getProfilePhotoUrl } from "@/src/api/telegram";
+import { EmptyAvatar } from "@/src/components/EmptyAvatar";
 import { ExternalImage } from "@/src/components/ExternalImage";
 
 export default function AdminPage() {
@@ -41,6 +42,7 @@ export default function AdminPage() {
               <TableCell>
                 <ExternalImage
                   src={getProfilePhotoUrl(user.user_id)}
+                  fallback={<EmptyAvatar />}
                   alt={user.name || "User Photo"}
                   width={50}
                   height={50}

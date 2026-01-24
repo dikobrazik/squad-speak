@@ -69,7 +69,7 @@ export const SelfAudioControls = ({
             </Button>
 
             <div className="p-2 flex items-center">
-              <Icon name="arrowUp" size={12} color="primary" />
+              <Icon name="arrowUp" size={12} color="heroui-primary" />
             </div>
           </div>
         </PopoverTrigger>

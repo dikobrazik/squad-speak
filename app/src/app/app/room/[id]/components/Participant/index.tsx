@@ -2,6 +2,7 @@
 
 import { Skeleton } from "@heroui/skeleton";
 import { cn } from "@heroui/theme";
+import { EmptyAvatar } from "@/src/components/EmptyAvatar";
 import { ExternalImage } from "@/src/components/ExternalImage";
 import { Icon } from "@/src/components/Icon";
 import { useProfile } from "@/src/hooks/useProfile";
@@ -37,6 +38,7 @@ export const Participant = ({
             {profile.photoUrl && (
               <>
                 <ExternalImage
+                  fallback={<EmptyAvatar />}
                   src={profile.photoUrl}
                   alt={profile?.name || "User Photo"}
                   width={50}

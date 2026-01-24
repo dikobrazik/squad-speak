@@ -5,6 +5,7 @@ import { cn } from "@heroui/theme";
 import { useQuery } from "@tanstack/react-query";
 import ms from "ms";
 import { getRooms } from "@/src/api";
+import { EmptyAvatar } from "@/src/components/EmptyAvatar";
 import { ExternalImage } from "@/src/components/ExternalImage";
 import { useProfile } from "@/src/hooks/useProfile";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
@@ -38,6 +39,7 @@ export const Sidebar = ({ className }: { className?: string }) => {
         <Skeleton isLoaded={!isLoading}>
           {profile.photoUrl && (
             <ExternalImage
+              fallback={<EmptyAvatar />}
               src={profile.photoUrl}
               alt={profile?.name || "User Photo"}
               width={50}

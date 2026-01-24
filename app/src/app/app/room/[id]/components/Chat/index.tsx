@@ -3,6 +3,7 @@ import { Input } from "@heroui/input";
 import { cn } from "@heroui/theme";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { getProfilePhotoUrl } from "@/src/api/telegram";
+import { EmptyAvatar } from "@/src/components/EmptyAvatar";
 import { ExternalImage } from "@/src/components/ExternalImage";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
 import type { DataChannel } from "@/src/services/DataChannel";
@@ -60,6 +61,7 @@ export const Chat = ({
               })}
             >
               <ExternalImage
+                fallback={<EmptyAvatar />}
                 src={getProfilePhotoUrl(from)}
                 alt={`${from}'s profile photo`}
                 width={40}

@@ -6,7 +6,7 @@ export default heroui({
     light: {
       extend: "light", // <- inherit default values from dark theme
       colors: {
-        background: "#ffffff",
+        background: "#787ed3",
         foreground: "#0D001A",
         primary: {
           100: "#FEF7CF",
