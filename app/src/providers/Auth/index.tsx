@@ -62,11 +62,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         <div className="h-screen flex flex-col justify-center">
           <div className="relative flex justify-center">
             {qrUrl && (
-              <Link
-                href={addDevicePageUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href={qrUrl} target="_blank" rel="noopener noreferrer">
                 <QRCode value={addDevicePageUrl} />
               </Link>
             )}
