@@ -3,9 +3,6 @@ import { IsBoolean } from 'class-validator';
 
 export class SetSystemSoundsDto {
   @IsBoolean()
-  @Transform(({ value }) => {
-    console.log(value);
-    return value === 'true' || value === true;
-  })
+  @Transform(({ value }) => value === 'true' || value === true)
   enabled: boolean;
 }

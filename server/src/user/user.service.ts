@@ -8,11 +8,6 @@ export class UserService {
   @InjectRepository(User)
   private readonly userRepository: Repository<User>;
 
-  public createGuestAccount(): Promise<User> {
-    const guestUser = this.userRepository.create({});
-    return this.userRepository.save(guestUser);
-  }
-
   public createUser(): Promise<User> {
     const user = this.userRepository.create({});
 

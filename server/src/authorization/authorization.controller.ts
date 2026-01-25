@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Inject,
@@ -13,10 +14,12 @@ import type { Request, Response } from 'express';
 import ms from 'ms';
 import { SessionStatus } from 'shared/types/session';
 import { Admin } from 'src/decorators/admin.decorator';
+import { User } from 'src/decorators/user.decorator';
+import { UserEntity } from 'src/entities/User';
 import { TelegramAuthSessionService } from 'src/telegram/telegram-auth-session.service';
-import { UserService } from 'src/user/user.service';
 import { AuthorizationService } from './authorization.service';
 import { Public } from './decorators/public.decorator';
+import { AuthorizeDeviceBodyDto, AuthorizeDeviceParamsDto } from './dtos';
 
 const SECURE_COOKIE_OPTIONS = {
   httpOnly: true,
@@ -25,11 +28,8 @@ const SECURE_COOKIE_OPTIONS = {
   // path: '/',
 } as const;
 
-@Public()
 @Controller('authorization')
 export class AuthorizationController {
-  @Inject(UserService)
-  private readonly userService: UserService;
   @Inject(AuthorizationService)
   private readonly authService: AuthorizationService;
   @Inject(ConfigService)
@@ -37,12 +37,7 @@ export class AuthorizationController {
   @Inject(TelegramAuthSessionService)
   private readonly telegramAuthSessionService: TelegramAuthSessionService;
 
-  @Post('guest')
-  async createGuestAccount() {
-    const guestUser = await this.userService.createGuestAccount();
-    return guestUser;
-  }
-
+  @Public()
   @Get('qr')
   createQr() {
     const sessionId = this.telegramAuthSessionService.createSession();
@@ -56,6 +51,21 @@ export class AuthorizationController {
     };
   }
 
+  @Post('authorize-device/:id')
+  authorizeDevice(
+    @Param() params: AuthorizeDeviceParamsDto,
+    @Body() body: AuthorizeDeviceBodyDto,
+    @User() user: UserEntity,
+  ) {
+    const session = this.telegramAuthSessionService.getSession(params.id);
+    session.userId = user.id;
+    session.rememberMe = body.rememberMe;
+    session.scanned = true;
+
+    this.telegramAuthSessionService.confirmSession(params.id);
+  }
+
+  @Public()
   @Get('/status/:id')
   async getSessionStatus(
     @Param('id') id: string,
@@ -68,7 +78,6 @@ export class AuthorizationController {
       }
     | {
         status: SessionStatus.CONFIRMED;
-        telegramId: number;
         userId: string;
         accessToken: string;
       }
@@ -79,11 +88,11 @@ export class AuthorizationController {
       return { status: SessionStatus.EXPIRED };
     }
 
-    if (!session.scanned) {
-      return { status: SessionStatus.PENDING, sessionId: session.id };
-    }
-
     if (!session.confirmed) {
+      if (!session.scanned) {
+        return { status: SessionStatus.PENDING, sessionId: session.id };
+      }
+
       return { status: SessionStatus.SCANNED, sessionId: session.id };
     }
 
@@ -106,16 +115,19 @@ export class AuthorizationController {
       maxAge: rememberMe ? ms('100d') : ms('3h'),
     });
 
-    response.cookie('deviceId', deviceId, SECURE_COOKIE_OPTIONS);
+    response.cookie('deviceId', deviceId, {
+      ...SECURE_COOKIE_OPTIONS,
+      maxAge: ms('1year'),
+    });
 
     return {
       status: SessionStatus.CONFIRMED,
-      telegramId: session.telegramId!,
       userId: session.userId,
       accessToken,
     };
   }
 
+  @Public()
   @Get('/refresh')
   async getAccessToken(
     @Req() request: Request,

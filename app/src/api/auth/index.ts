@@ -1,11 +1,6 @@
 import axios from "axios";
 import type { SessionStatus } from "shared/types/session";
 
-export const createGuest = () =>
-  axios
-    .post<{ id: string }>("/authorization/guest")
-    .then((response) => response.data);
-
 export const getAuthQr = () =>
   axios
     .get<{ sessionId: string; qrUrl: string }>("/authorization/qr")
@@ -15,7 +10,6 @@ type AuthResult =
   | { status: Exclude<SessionStatus, SessionStatus.CONFIRMED> }
   | {
       status: SessionStatus.CONFIRMED;
-      telegramId: number;
       userId: string;
       accessToken: string;
     };
@@ -33,4 +27,14 @@ type RefreshTokenResponse = {
 export const refreshToken = () =>
   axios
     .get<RefreshTokenResponse>(`/authorization/refresh`)
+    .then((response) => response.data);
+
+export const authorizeDevice = (payload: {
+  sessionId: string;
+  rememberMe: boolean;
+}) =>
+  axios
+    .post(`/authorization/authorize-device/${payload.sessionId}`, {
+      rememberMe: payload.rememberMe,
+    })
     .then((response) => response.data);

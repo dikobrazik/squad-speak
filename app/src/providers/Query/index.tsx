@@ -10,6 +10,7 @@ export const QueryProvider = ({ children }: { children: React.ReactNode }) => {
       new QueryClient({
         defaultOptions: {
           queries: {
+            refetchIntervalInBackground: true,
             refetchOnWindowFocus: false,
             retry(failureCount, error) {
               if (isAxiosError(error) && error.response?.status === 401) {

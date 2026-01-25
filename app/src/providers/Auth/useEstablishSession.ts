@@ -1,25 +1,23 @@
-import { skipToken, useQuery } from "@tanstack/react-query";
+import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
 import ms from "ms";
 import { useEffect } from "react";
 import { SessionStatus } from "shared/types/session";
 import { getAuthQr, getSession, setToken } from "@/src/api";
+import { getQueryData } from "@/src/utils/react-query";
 
 type Options = {
   enabled?: boolean;
   rememberMe: boolean;
-  setUserId: (userId: string) => void;
 };
 
-export const useEstablishSession = ({
-  rememberMe,
-  enabled,
-  setUserId,
-}: Options) => {
+export const useEstablishSession = ({ rememberMe, enabled }: Options) => {
+  const queryClient = useQueryClient();
+
   const { data: qrData, refetch: refetchQr } = useQuery({
-    enabled: enabled,
+    enabled,
     queryKey: ["qr-auth"],
     queryFn: getAuthQr,
-    refetchInterval: ms("10m"), // refresh QR code every 10 minutes
+    refetchInterval: ms("10m"),
   });
 
   const sessionId = qrData?.sessionId || null;
@@ -27,16 +25,16 @@ export const useEstablishSession = ({
 
   const { data: sessionData } = useQuery({
     enabled: (query) =>
-      hasSessionId && query.state.data?.status !== SessionStatus.CONFIRMED,
+      hasSessionId && getQueryData(query)?.status !== SessionStatus.CONFIRMED,
     queryKey: ["get-session", { sessionId }],
     queryFn: sessionId ? () => getSession(sessionId) : skipToken,
-    refetchInterval: 500,
+    refetchInterval: ms("1s"),
   });
 
   useEffect(() => {
     if (sessionData && sessionData.status === SessionStatus.CONFIRMED) {
       setToken(sessionData.accessToken);
-      setUserId(sessionData.userId);
+      queryClient.refetchQueries({ queryKey: ["refreshToken"] });
     }
   }, [sessionData]);
 
@@ -44,7 +42,7 @@ export const useEstablishSession = ({
     if (sessionData?.status === SessionStatus.EXPIRED) {
       refetchQr();
     }
-  }, [qrData?.sessionId]);
+  }, [sessionData?.status, qrData?.sessionId]);
 
   let qrUrl: string | null = qrData ? qrData.qrUrl : null;
 
