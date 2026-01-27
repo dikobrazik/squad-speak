@@ -11,7 +11,7 @@ export class MessageEvent extends CustomEvent<ChatMessage> {
   }
 }
 
-export class DataChannel extends EventTarget {
+export class DataChannelService extends EventTarget {
   private dataChannels = new Map<string, RTCDataChannel>();
   private messageHistory: ChatMessage[] = [];
 

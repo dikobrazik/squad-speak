@@ -1,4 +1,4 @@
-import { SoundService } from ".";
+import { getNoteFrequency } from "./utils";
 
 describe("SoundService", () => {
   it.each([
@@ -12,7 +12,7 @@ describe("SoundService", () => {
     ["G4", 392.0],
     ["Bb4", 466.16],
   ])("should return correct frequency for note %s - %f Hz", (note, expectedFrequency) => {
-    const freq = SoundService.getNoteFrequency(note as any);
+    const freq = getNoteFrequency(note as any);
     expect(freq).toBeCloseTo(expectedFrequency, 1);
   });
 });

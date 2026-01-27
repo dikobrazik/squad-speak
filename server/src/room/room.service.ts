@@ -23,6 +23,22 @@ export class RoomService {
     return this.roomRepository.findOne({ where: { id: roomId } });
   }
 
+  async checkPassword(roomId: string, password: string) {
+    const room = await this.getRoom(roomId);
+
+    if (!room) {
+      return { valid: false };
+    }
+
+    const passwordHash = RoomService.hash(password);
+
+    if (room.passwordHash && room.passwordHash !== passwordHash) {
+      return { valid: false };
+    }
+
+    return { valid: true };
+  }
+
   getRooms(): Promise<(Room & { protected: boolean })[]> {
     return this.roomRepository
       .find()
@@ -44,6 +60,8 @@ export class RoomService {
   }
 
   static hash(password: string): string {
+    if (!password) return '';
+
     return hash('sha256', password);
   }
 }

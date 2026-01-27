@@ -1,20 +1,17 @@
-import type { DataChannel } from "../DataChannel";
+import type { DataChannelService } from "../DataChannel";
 import { ICE_SERVERS } from "./constants";
 
 type UserId = string;
 
 export interface SignalMessage {
-  from: UserId;
   to: UserId;
   type: "offer" | "answer" | "ice-candidate";
   data: any;
 }
 
 export interface MultiPeerRTCOptions {
-  dataChannel: DataChannel;
-  userId: string;
-  onRemoteStream?: (userId: UserId, stream: MediaStream) => void;
-  onPeerConnected?: (userId: UserId) => void;
+  dataChannel: DataChannelService;
+  onPeerConnected?: (userId: UserId, stream: MediaStream) => void;
   onPeerDisconnected?: (userId: UserId) => void;
   sendSignal: (msg: SignalMessage) => void;
 }
@@ -28,12 +25,33 @@ export class MultiPeerRTC {
   constructor(private options: MultiPeerRTCOptions) {}
 
   enrichIceServers(servers: RTCIceServer[]) {
+    // todo: попробовать добавлять сервера после создания пиров
     this.iceServers.push(...servers);
+  }
+
+  /* ---------- Local media ---------- */
+
+  addAudioTrack(stream: MediaStream) {
+    if (this.localStream) return;
+
+    this.localStream = stream;
+
+    const audioTrack = stream.getAudioTracks()[0];
+    if (!audioTrack) {
+      console.warn("No audio track in the provided stream");
+      return;
+    }
+
+    for (const pc of this.peers.values()) {
+      pc.addTrack(audioTrack, stream);
+    }
   }
 
   /* ---------- Change media stream ---------- */
 
   replaceAudioTrack(stream: MediaStream) {
+    if (!this.localStream) return this.addAudioTrack(stream);
+
     const newTrack = stream.getAudioTracks()[0];
 
     if (!newTrack) {
@@ -41,29 +59,24 @@ export class MultiPeerRTC {
       return;
     }
 
-    this.localStream?.getAudioTracks().forEach((oldTrack) => {
+    for (const oldTrack of this.localStream.getAudioTracks()) {
       for (const pc of this.peers.values()) {
-        const sender = pc.getSenders().find((s) => s.track === oldTrack);
-        if (sender) {
-          sender.replaceTrack(newTrack);
+        if (pc.getSenders().length) {
+          const sender = pc
+            .getSenders()
+            .find((s) => s.track?.id === oldTrack.id);
+
+          if (sender) {
+            sender.replaceTrack(newTrack);
+          }
+        } else {
+          pc.addTrack(newTrack, stream);
         }
       }
       oldTrack.stop();
-    });
-
-    this.localStream = stream;
-  }
-
-  /* ---------- Local media ---------- */
-
-  setLocalStream(stream: MediaStream) {
-    this.localStream = stream;
-
-    for (const pc of this.peers.values()) {
-      this.localStream.getAudioTracks().forEach((track) => {
-        pc.addTrack(track, stream);
-      });
     }
+
+    this.localStream = stream;
   }
 
   /* ---------- Peer management ---------- */
@@ -93,11 +106,9 @@ export class MultiPeerRTC {
     };
 
     pc.onicecandidate = ({ candidate }) => {
-      // console.info("onicecandidate", userId, candidate);
       if (candidate) {
         this.options.sendSignal({
           to: userId,
-          from: this.options.userId,
           type: "ice-candidate",
           data: candidate,
         });
@@ -106,21 +117,20 @@ export class MultiPeerRTC {
 
     pc.ontrack = ({ track, streams }) => {
       track.onunmute = () => {
-        this.options.onRemoteStream?.(userId, streams[0]);
+        this.options.onPeerConnected?.(userId, streams[0]);
       };
     };
 
     pc.onconnectionstatechange = () => {
-      if (pc.connectionState === "connected") {
-        this.options.onPeerConnected?.(userId);
-      }
       if (pc.connectionState === "failed" || pc.connectionState === "closed") {
+        console.log(`Connection state ${pc.connectionState} for`, userId);
         this.closePeer(userId);
       }
     };
 
     pc.onsignalingstatechange = () => {
       if (pc.signalingState === "closed") {
+        console.log("Signaling state closed for", userId);
         this.closePeer(userId);
       }
     };
@@ -153,7 +163,6 @@ export class MultiPeerRTC {
     await pc.setLocalDescription(offer);
 
     this.options.sendSignal({
-      from: this.options.userId,
       to: userId,
       type: "offer",
       data: offer,
@@ -183,7 +192,6 @@ export class MultiPeerRTC {
     console.info("Sending answer to", userId);
 
     this.options.sendSignal({
-      from: this.options.userId,
       to: userId,
       type: "answer",
       data: answer,

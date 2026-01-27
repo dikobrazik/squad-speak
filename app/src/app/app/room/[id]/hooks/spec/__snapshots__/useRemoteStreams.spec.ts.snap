@@ -1,0 +1,112 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`useRemoteStreams если добавить стрим должен добавить его по userId 1`] = `
+{
+  "muted": false,
+  "stream": {
+    "mediaStream": 1,
+  },
+}
+`;
+
+exports[`useRemoteStreams если коллекция с пользователями если замутить user-2 должен вернуть muted=true для него 1`] = `
+{
+  "user-1": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+  "user-2": {
+    "muted": true,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+}
+`;
+
+exports[`useRemoteStreams если коллекция с пользователями если замутить user-2 должен не должен трогать другого 1`] = `
+{
+  "user-1": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+  "user-2": {
+    "muted": true,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+}
+`;
+
+exports[`useRemoteStreams если коллекция с пользователями если замутить user-2 если размутить пользователя который был замучен должен вернуть muted=false для него 1`] = `
+{
+  "user-1": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+  "user-2": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+}
+`;
+
+exports[`useRemoteStreams если коллекция с пользователями если замутить user-2 если размутить пользователя который был замучен должен не должен трогать другого 1`] = `
+{
+  "user-1": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+  "user-2": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+}
+`;
+
+exports[`useRemoteStreams если коллекция с пользователями если размутить пользователя который не был замучен должен вернуть muted=false для него 1`] = `
+{
+  "user-1": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+  "user-2": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+}
+`;
+
+exports[`useRemoteStreams если коллекция с пользователями если размутить пользователя который не был замучен должен не должен трогать другого 1`] = `
+{
+  "user-1": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+  "user-2": {
+    "muted": false,
+    "stream": {
+      "mediaStream": 1,
+    },
+  },
+}
+`;

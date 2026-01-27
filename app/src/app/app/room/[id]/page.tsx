@@ -17,7 +17,7 @@ export default function RoomPage() {
 
   const websocket = useSocketIO(roomId, "multiuser");
 
-  const { usersCount } = useRoom({ websocket });
+  useRoom({ websocket });
 
   const { dataChannel, localStream, remoteStreams } = useMultiPeerConnection({
     websocket,

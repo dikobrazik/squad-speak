@@ -42,6 +42,7 @@ export class MultiUserEventsGateway {
   async handleConnection(@ConnectedSocket() client: Client) {
     const roomId = String(client.handshake.query.roomId);
     const userId = String(client.handshake.auth.userId);
+    const password = String(client.handshake.auth.password || '');
 
     const room = await this.roomService.getRoom(roomId);
 
@@ -51,15 +52,12 @@ export class MultiUserEventsGateway {
       return;
     }
 
-    if (room.passwordHash) {
-      const providedPassword = String(client.handshake.auth.password || '');
-      const providedPasswordHash = RoomService['hash'](providedPassword);
+    const { valid } = await this.roomService.checkPassword(roomId, password);
 
-      if (providedPasswordHash !== room.passwordHash) {
-        client.emit('invalid-password');
-        client.disconnect();
-        return;
-      }
+    if (!valid) {
+      client.emit('invalid-password');
+      client.disconnect();
+      return;
     }
 
     const usersInRoom = this.roomStateService.getUsersCount(roomId);

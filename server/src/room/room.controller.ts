@@ -28,22 +28,18 @@ export class RoomController {
   }
 
   @Post(':id/check-password')
-  checkPassword(@Param('id') id: string, @Body('password') password: string) {
-    return this.roomService.getRoom(id).then((room) => {
-      if (!room) {
-        return { valid: false };
-      }
-      const passwordHash = RoomService.hash(password);
+  async checkPassword(
+    @Param('id') id: string,
+    @Body('password') password: string,
+  ) {
+    const { valid } = await this.roomService.checkPassword(id, password);
 
-      if (room.passwordHash !== passwordHash) {
-        throw new ForbiddenException({
-          message: 'Invalid password',
-          error: 'invalid_password',
-        });
-      }
-
-      return { valid: true };
-    });
+    if (!valid) {
+      throw new ForbiddenException({
+        message: 'Invalid password',
+        error: 'invalid_password',
+      });
+    }
   }
 
   @Get()

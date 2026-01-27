@@ -6,14 +6,14 @@ import { getProfilePhotoUrl } from "@/src/api/telegram";
 import { EmptyAvatar } from "@/src/components/EmptyAvatar";
 import { ExternalImage } from "@/src/components/ExternalImage";
 import { useAuthContext } from "@/src/providers/Auth/hooks";
-import type { DataChannel } from "@/src/services/DataChannel";
+import type { DataChannelService } from "@/src/services/DataChannel";
 import { useMessages } from "../../hooks/useMessages";
 
 export const Chat = ({
   dataChannel,
   controls,
 }: {
-  dataChannel: DataChannel;
+  dataChannel: DataChannelService;
   controls: ReactNode;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);

@@ -8,4 +8,10 @@ module.exports = {
   transform: {
     ...tsJestTransformCfg,
   },
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/$1",
+    "^shared/(.*)$": "<rootDir>/../shared/$1",
+    ".*/(.*).(s)?css$": "<rootDir>/config/tests/styles-mock.ts",
+  },
+  roots: ["<rootDir>/src", "<rootDir>/../shared"],
 };
