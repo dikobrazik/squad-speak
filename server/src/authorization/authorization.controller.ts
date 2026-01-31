@@ -8,6 +8,7 @@ import {
   Post,
   Req,
   Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { Request, Response } from 'express';
@@ -144,7 +145,10 @@ export class AuthorizationController {
         deviceId,
       ));
     } catch (error) {
-      response.clearCookie('refreshToken');
+      if (error instanceof UnauthorizedException) {
+        response.clearCookie('refreshToken');
+      }
+
       throw error;
     }
 

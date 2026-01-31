@@ -8,7 +8,8 @@ import css from "./Layout.module.scss";
 
 export default function Layout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  modal,
+}: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
   return (
     <Providers>
       <SettingsProvider>
@@ -31,6 +32,7 @@ export default function Layout({
             </nav>
             <div className={css.content}>{children}</div>
           </div>
+          {modal}
         </RoomPasswordStore>
       </SettingsProvider>
     </Providers>
