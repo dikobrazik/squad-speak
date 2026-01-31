@@ -1,7 +1,7 @@
 import { addToast } from "@heroui/toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { deviceSettingsService } from "@/src/services/DeviceSettings";
+import { deviceSettingsService } from "services/DeviceSettings";
 
 export const useMediaStream = () => {
   const router = useRouter();

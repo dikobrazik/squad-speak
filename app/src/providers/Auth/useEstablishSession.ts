@@ -1,9 +1,9 @@
 import { skipToken, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getAuthQr, getSession, setToken } from "api";
 import ms from "ms";
 import { useEffect } from "react";
 import { SessionStatus } from "shared/types/session";
-import { getAuthQr, getSession, setToken } from "@/src/api";
-import { getQueryData } from "@/src/utils/react-query";
+import { getQueryData } from "utils/react-query";
 
 type Options = {
   enabled?: boolean;

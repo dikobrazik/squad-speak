@@ -1,9 +1,9 @@
+import { Icon } from "components/Icon";
 import Image from "next/image";
 import Link from "next/link";
-import { Icon } from "@/src/components/Icon";
-import { Providers } from "@/src/providers";
-import { RoomPasswordStore } from "@/src/providers/RoomPasswordStore";
-import { SettingsProvider } from "@/src/providers/Settings";
+import { Providers } from "providers";
+import { RoomPasswordStore } from "providers/RoomPasswordStore";
+import { SettingsProvider } from "providers/Settings";
 import css from "./Layout.module.scss";
 
 export default function Layout({

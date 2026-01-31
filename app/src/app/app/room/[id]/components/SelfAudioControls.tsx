@@ -1,16 +1,16 @@
 import { Button } from "@heroui/button";
 import { Listbox, ListboxItem } from "@heroui/listbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { Icon } from "components/Icon";
+import { useDevicesList } from "hooks/useDevicesList";
+import { useAuthContext } from "providers/Auth/hooks";
 import { useEffect, useState } from "react";
+import { deviceSettingsService } from "services/DeviceSettings";
 import type {
   MultiRoomClientToServerEvents,
   MultiRoomServerToClientEvents,
 } from "shared/types/websockets/multi-room";
 import type { Socket } from "socket.io-client";
-import { Icon } from "@/src/components/Icon";
-import { useDevicesList } from "@/src/hooks/useDevicesList";
-import { useAuthContext } from "@/src/providers/Auth/hooks";
-import { deviceSettingsService } from "@/src/services/DeviceSettings";
 
 export const SelfAudioControls = ({
   stream,

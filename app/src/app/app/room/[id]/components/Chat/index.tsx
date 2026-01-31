@@ -1,12 +1,12 @@
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { cn } from "@heroui/theme";
+import { getProfilePhotoUrl } from "api/telegram";
+import { EmptyAvatar } from "components/EmptyAvatar";
+import { ExternalImage } from "components/ExternalImage";
+import { useAuthContext } from "providers/Auth/hooks";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { getProfilePhotoUrl } from "@/src/api/telegram";
-import { EmptyAvatar } from "@/src/components/EmptyAvatar";
-import { ExternalImage } from "@/src/components/ExternalImage";
-import { useAuthContext } from "@/src/providers/Auth/hooks";
-import type { DataChannelService } from "@/src/services/DataChannel";
+import type { DataChannelService } from "services/DataChannel";
 import { useMessages } from "../../hooks/useMessages";
 
 export const Chat = ({

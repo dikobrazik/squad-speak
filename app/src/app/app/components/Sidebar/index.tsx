@@ -3,12 +3,12 @@
 import { Skeleton } from "@heroui/skeleton";
 import { cn } from "@heroui/theme";
 import { useQuery } from "@tanstack/react-query";
+import { getRooms } from "api";
+import { EmptyAvatar } from "components/EmptyAvatar";
+import { ExternalImage } from "components/ExternalImage";
+import { useProfile } from "hooks/useProfile";
 import ms from "ms";
-import { getRooms } from "@/src/api";
-import { EmptyAvatar } from "@/src/components/EmptyAvatar";
-import { ExternalImage } from "@/src/components/ExternalImage";
-import { useProfile } from "@/src/hooks/useProfile";
-import { useAuthContext } from "@/src/providers/Auth/hooks";
+import { useAuthContext } from "providers/Auth/hooks";
 import { CreateRoomModal } from "./CreateRoomModal";
 import { RoomLink } from "./RoomLink";
 

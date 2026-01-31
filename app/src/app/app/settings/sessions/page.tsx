@@ -11,10 +11,10 @@ import {
 } from "@heroui/table";
 import { addToast } from "@heroui/toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { getActiveSessions, invalidateSession } from "@/src/api";
-import { Icon } from "@/src/components/Icon";
-import { LoadingPage } from "@/src/components/LoadingPage";
-import { formatDateTime } from "@/src/utils/date-formatter";
+import { getActiveSessions, invalidateSession } from "api";
+import { Icon } from "components/Icon";
+import { LoadingPage } from "components/LoadingPage";
+import { formatDateTime } from "utils/date-formatter";
 
 export default function SessionsSettingsPage() {
   const { data, isLoading, refetch } = useQuery({

@@ -1,15 +1,15 @@
 import { addToast } from "@heroui/toast";
+import { getTurnServers } from "api";
+import { useAuthContext } from "providers/Auth/hooks";
 import { useEffect, useMemo, useState } from "react";
+import { DataChannelService } from "services/DataChannel";
+import { MultiPeerRTC } from "services/MultiPeerRTC";
+import { soundService } from "services/SoundService";
 import type {
   MultiRoomClientToServerEvents,
   MultiRoomServerToClientEvents,
 } from "shared/types/websockets/multi-room";
 import type { Socket } from "socket.io-client";
-import { getTurnServers } from "@/src/api";
-import { useAuthContext } from "@/src/providers/Auth/hooks";
-import { DataChannelService } from "@/src/services/DataChannel";
-import { MultiPeerRTC } from "@/src/services/MultiPeerRTC";
-import { soundService } from "@/src/services/SoundService";
 import { useMediaStream } from "./useMediaStream";
 import { useRemoteStreams } from "./useRemoteStreams";
 import { useWebsocketEvents } from "./useWebsocketEvents";

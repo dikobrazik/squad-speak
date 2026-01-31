@@ -2,9 +2,9 @@
 
 import { Button } from "@heroui/button";
 import { useMutation } from "@tanstack/react-query";
+import { authorizeDevice } from "api";
+import { LoadingPage } from "components/LoadingPage";
 import { redirect, useSearchParams } from "next/navigation";
-import { authorizeDevice } from "@/src/api";
-import { LoadingPage } from "@/src/components/LoadingPage";
 
 export default function AddDevicePage() {
   const searchParams = useSearchParams();

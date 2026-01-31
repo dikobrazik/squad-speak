@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Providers } from "@/src/providers";
+import { Providers } from "providers";
 
 export default function AdminLayout({
   children,

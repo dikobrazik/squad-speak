@@ -1,13 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { getUserSettings, type Settings } from "api";
 import {
   createContext,
   type PropsWithChildren,
   useContext,
   useEffect,
 } from "react";
-import { getUserSettings, type Settings } from "@/src/api";
 
 const defaultSettings: Settings = {
   systemSounds: true,

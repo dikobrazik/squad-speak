@@ -1,5 +1,5 @@
 import { useMemo, useReducer } from "react";
-import type { ChatMessage } from "@/src/services/DataChannel";
+import type { ChatMessage } from "services/DataChannel";
 
 type State = {
   byId: Record<string, ChatMessage>;

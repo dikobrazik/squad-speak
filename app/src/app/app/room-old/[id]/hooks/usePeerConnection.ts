@@ -1,11 +1,11 @@
 import { addToast } from "@heroui/toast";
+import { getTurnServers } from "api";
 import { useEffect, useMemo, useRef } from "react";
 import type {
   SingleRoomClientToServerEvents,
   SingleRoomServerToClientEvents,
 } from "shared/types/websockets/single-room";
 import type { Socket } from "socket.io-client";
-import { getTurnServers } from "@/src/api";
 
 export const usePeerConnection = ({
   websocket,

@@ -2,11 +2,11 @@
 
 import { Checkbox } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { getUserSettings, setSystemSounds } from "api";
+import { LoadingPage } from "components/LoadingPage";
 import { useEffect, useState } from "react";
-import { getUserSettings, setSystemSounds } from "@/src/api";
-import { LoadingPage } from "@/src/components/LoadingPage";
-import { deviceSettingsService } from "@/src/services/DeviceSettings";
-import { soundService } from "@/src/services/SoundService";
+import { deviceSettingsService } from "services/DeviceSettings";
+import { soundService } from "services/SoundService";
 import { DeviceSelect } from "./components/DeviceSelect";
 
 export default function AudioSettingsPage() {

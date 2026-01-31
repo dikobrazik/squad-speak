@@ -10,7 +10,7 @@ import {
 import { Form } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { useMutation } from "@tanstack/react-query";
-import { createRoom } from "@/src/api";
+import { createRoom } from "api";
 
 export const CreateRoomModal = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

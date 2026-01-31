@@ -1,10 +1,10 @@
 "use client";
 
+import { useRoom } from "hooks/useRoom";
+import { useSocketIO } from "hooks/useSocketIO";
 import { useParams } from "next/navigation";
+import { useAuthContext } from "providers/Auth/hooks";
 import { useState } from "react";
-import { useRoom } from "@/src/hooks/useRoom";
-import { useSocketIO } from "@/src/hooks/useSocketIO";
-import { useAuthContext } from "@/src/providers/Auth/hooks";
 import { Chat } from "./components/Chat";
 import { Participant } from "./components/Participant";
 import { SelfAudioControls } from "./components/SelfAudioControls";

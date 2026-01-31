@@ -9,10 +9,10 @@ import {
   TableRow,
 } from "@heroui/table";
 import { useQuery } from "@tanstack/react-query";
-import { getUsersList } from "@/src/api";
-import { getProfilePhotoUrl } from "@/src/api/telegram";
-import { EmptyAvatar } from "@/src/components/EmptyAvatar";
-import { ExternalImage } from "@/src/components/ExternalImage";
+import { getUsersList } from "api";
+import { getProfilePhotoUrl } from "api/telegram";
+import { EmptyAvatar } from "components/EmptyAvatar";
+import { ExternalImage } from "components/ExternalImage";
 
 export default function AdminPage() {
   const { data, error, isLoading } = useQuery({

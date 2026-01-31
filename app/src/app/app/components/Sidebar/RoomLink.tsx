@@ -1,9 +1,9 @@
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import { Chip, cn } from "@heroui/react";
+import type { Room } from "api";
+import { Icon } from "components/Icon";
 import { useParams } from "next/navigation";
-import type { Room } from "@/src/api";
-import { Icon } from "@/src/components/Icon";
 
 export const RoomLink = ({ room }: { room: Room }) => {
   const roomId = (useParams()?.id as string) || null;

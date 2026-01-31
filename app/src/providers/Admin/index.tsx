@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { checkIsAdmin } from "api";
+import { LoadingPage } from "components/LoadingPage";
 import { type PropsWithChildren, useEffect } from "react";
-import { checkIsAdmin } from "@/src/api";
-import { LoadingPage } from "@/src/components/LoadingPage";
 
 export const AdminGuardProvider = ({ children }: PropsWithChildren) => {
   const { isFetching, isFetched, error } = useQuery({

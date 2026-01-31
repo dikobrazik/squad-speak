@@ -2,10 +2,10 @@
 
 import { Skeleton } from "@heroui/skeleton";
 import { cn } from "@heroui/theme";
-import { EmptyAvatar } from "@/src/components/EmptyAvatar";
-import { ExternalImage } from "@/src/components/ExternalImage";
-import { Icon } from "@/src/components/Icon";
-import { useProfile } from "@/src/hooks/useProfile";
+import { EmptyAvatar } from "components/EmptyAvatar";
+import { ExternalImage } from "components/ExternalImage";
+import { Icon } from "components/Icon";
+import { useProfile } from "hooks/useProfile";
 import { useVolumeAnimation } from "../../hooks/useVolumeAnimation";
 import { AudioPlayer } from "../AudioPlayer";
 import css from "./Participant.module.scss";

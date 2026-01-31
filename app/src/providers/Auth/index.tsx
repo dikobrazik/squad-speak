@@ -3,13 +3,13 @@
 import { Checkbox } from "@heroui/react";
 import { Spinner } from "@heroui/spinner";
 import { useQuery } from "@tanstack/react-query";
+import { refreshToken, setToken } from "api";
+import { LoadingPage } from "components/LoadingPage";
 import ms from "ms";
 import Link from "next/link";
 import { createContext, type PropsWithChildren, useState } from "react";
 import QRCode from "react-qr-code";
 import { SessionStatus } from "shared/types/session";
-import { refreshToken, setToken } from "@/src/api";
-import { LoadingPage } from "@/src/components/LoadingPage";
 import { useAddDevicePageUrl, useIsAddDevicePage } from "./useAddDevice";
 import { useEstablishSession } from "./useEstablishSession";
 

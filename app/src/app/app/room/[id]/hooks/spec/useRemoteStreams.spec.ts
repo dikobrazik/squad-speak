@@ -1,5 +1,5 @@
 import { act, type RenderHookResult, renderHook } from "@testing-library/react";
-import { mockType } from "@/src/utils/test";
+import { mockType } from "utils/test";
 import { useRemoteStreams } from "../useRemoteStreams";
 
 const mediaStreamMock = mockType<MediaStream>({ mediaStream: 1 });

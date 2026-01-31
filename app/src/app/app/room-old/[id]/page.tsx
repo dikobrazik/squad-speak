@@ -1,8 +1,8 @@
 "use client";
 
+import { useRoom } from "hooks/useRoom";
+import { useSocketIO } from "hooks/useSocketIO";
 import { useParams } from "next/navigation";
-import { useRoom } from "@/src/hooks/useRoom";
-import { useSocketIO } from "@/src/hooks/useSocketIO";
 import { usePeerConnection } from "./hooks/usePeerConnection";
 
 export default function RoomPage() {

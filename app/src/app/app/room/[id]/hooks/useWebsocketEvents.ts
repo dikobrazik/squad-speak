@@ -1,14 +1,14 @@
 import { addToast } from "@heroui/toast";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "providers/Auth/hooks";
 import { useEffect } from "react";
+import type { MultiPeerRTC } from "services/MultiPeerRTC";
+import { soundService } from "services/SoundService";
 import type {
   MultiRoomClientToServerEvents,
   MultiRoomServerToClientEvents,
 } from "shared/types/websockets/multi-room";
 import type { Socket } from "socket.io-client";
-import { useAuthContext } from "@/src/providers/Auth/hooks";
-import type { MultiPeerRTC } from "@/src/services/MultiPeerRTC";
-import { soundService } from "@/src/services/SoundService";
 
 export const useWebsocketEvents = ({
   websocket,

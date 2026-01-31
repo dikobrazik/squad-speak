@@ -1,11 +1,11 @@
+import { WS_BASE_URL } from "config";
+import { useAuthContext } from "providers/Auth/hooks";
 import { useState } from "react";
 import type {
   SingleRoomClientToServerEvents,
   SingleRoomServerToClientEvents,
 } from "shared/types/websockets/single-room";
 import { io, type Socket } from "socket.io-client";
-import { WS_BASE_URL } from "@/src/config";
-import { useAuthContext } from "@/src/providers/Auth/hooks";
 import { useRoomsPasswordsStore } from "../providers/RoomPasswordStore";
 
 export const useSocketIO = (roomId: string, namespace?: string) => {
