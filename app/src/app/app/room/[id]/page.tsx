@@ -1,6 +1,5 @@
 "use client";
 
-import { useRoom } from "hooks/useRoom";
 import { useSocketIO } from "hooks/useSocketIO";
 import { useParams } from "next/navigation";
 import { useAuthContext } from "providers/Auth/hooks";
@@ -9,6 +8,7 @@ import { Chat } from "./components/Chat";
 import { Participant } from "./components/Participant";
 import { SelfAudioControls } from "./components/SelfAudioControls";
 import { useMultiPeerConnection } from "./hooks/useMultiPeerConnection";
+import { useRoom } from "./hooks/useRoom";
 
 export default function RoomPage() {
   const { userId } = useAuthContext();
