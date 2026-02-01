@@ -1,4 +1,3 @@
-// import axios from "axios";
 import { WS_BASE_URL } from "config";
 import { useAuthContext } from "providers/Auth/hooks";
 import { useState } from "react";
@@ -18,7 +17,6 @@ export const useSocketIO = (roomId: string, namespace?: string) => {
       },
       auth: {
         userId,
-        // token: axios.defaults.headers.common["Authorization"],
         password: passwords[roomId],
       },
     }),
