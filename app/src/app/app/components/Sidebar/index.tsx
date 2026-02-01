@@ -29,7 +29,7 @@ export const Sidebar = ({ className }: { className?: string }) => {
       <div className="flex flex-col flex-1 overflow-hidden p-4">
         <CreateRoomModal />
         <h2 className="w-full text-xl font-bold mb-4">Rooms</h2>
-        <div className="w-full flex-1 flex flex-col overflow-y-scroll">
+        <div className="w-full flex-1 flex flex-col overflow-y-auto styled-scrollbar">
           {data?.map((room) => (
             <RoomLink room={room} key={room.id} />
           ))}

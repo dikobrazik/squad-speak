@@ -13,7 +13,7 @@ export const RoomLink = ({ room }: { room: Room }) => {
       as={Link}
       href={`/app/room/${room.id}`}
       className={cn(
-        "mb-2 border border-primary flex items-center justify-between text-white bg-transparent",
+        "mb-2 flex-[0_0_auto] border border-primary flex items-center justify-between text-white bg-transparent",
         {
           "border-2 bg-primary-50 text-foreground font-bold":
             room.id === roomId,
