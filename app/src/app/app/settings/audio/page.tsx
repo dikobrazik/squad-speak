@@ -3,6 +3,7 @@
 import { Checkbox } from "@heroui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getUserSettings, setSystemSounds } from "api";
+import { I18n } from "components/I18n";
 import { LoadingPage } from "components/LoadingPage";
 import { useEffect, useState } from "react";
 import { deviceSettingsService } from "services/DeviceSettings";
@@ -46,11 +47,13 @@ export default function AudioSettingsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Audio Settings</h1>
+      <h1 className="text-2xl font-bold mb-4">
+        <I18n id="settings.audio-title" />
+      </h1>
 
       <section className="mb-6">
         <DeviceSelect
-          label="Input Device"
+          label={<I18n id="settings.audio-inputDevice" />}
           kind="audioinput"
           defaultDeviceId={deviceSettingsService.getAudioInputDevice()}
           onDeviceChange={deviceSettingsService.setAudioInputDevice.bind(
@@ -61,7 +64,7 @@ export default function AudioSettingsPage() {
 
       <section className="mb-6">
         <DeviceSelect
-          label="Output Device"
+          label={<I18n id="settings.audio-outputDevice" />}
           kind="audiooutput"
           defaultDeviceId={deviceSettingsService.getAudioOutputDevice()}
           onDeviceChange={deviceSettingsService.setAudioOutputDevice.bind(
@@ -74,7 +77,7 @@ export default function AudioSettingsPage() {
         isSelected={systemSoundsEnabled}
         onValueChange={onSystemSoundsChange}
       >
-        System sounds
+        <I18n id="settings.audio-systemSounds" />
       </Checkbox>
     </div>
   );

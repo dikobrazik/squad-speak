@@ -1,6 +1,7 @@
 import { Button } from "@heroui/button";
 import { Link as HeroLink } from "@heroui/link";
 import { cn } from "@heroui/theme";
+import { I18n } from "components/I18n";
 import Image from "next/image";
 import Link from "next/link";
 import section1Image from "./assets/section1.svg";
@@ -23,7 +24,7 @@ export default function LandingPage() {
         </Link>
 
         <Button as={HeroLink} color="primary" href="/app">
-          Enter SquadSpeak
+          <I18n id="landingPage.enter" />
         </Button>
       </nav>
 
@@ -31,18 +32,13 @@ export default function LandingPage() {
         className={cn(css.head, "h-screen flex justify-center items-center")}
       >
         <h1 className={css.heading}>
-          <span>next level</span>
-          <br />
-          speak experience
-          <br />
-          with <span>your</span> teammates
+          <I18n id="landingPage.heading" rich />
         </h1>
       </section>
 
       <section className={css.section}>
         <h2>
-          Voice chat app for gamers, built to enhance teamwork and
-          communication.
+          <I18n id="landingPage.section1Heading" />
         </h2>
 
         <Image
@@ -61,15 +57,13 @@ export default function LandingPage() {
           height={400}
         />
         <h2>
-          Voice chat app for gamers, built to enhance teamwork and
-          communication.
+          <I18n id="landingPage.section2Heading" />
         </h2>
       </section>
 
       <section className={css.section}>
         <h2>
-          Voice chat app for gamers, built to enhance teamwork and
-          communication.
+          <I18n id="landingPage.section3Heading" />
         </h2>
         <Image
           src={section3Image}

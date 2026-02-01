@@ -4,6 +4,7 @@ import { cn } from "@heroui/theme";
 import { getProfilePhotoUrl } from "api/telegram";
 import { EmptyAvatar } from "components/EmptyAvatar";
 import { ExternalImage } from "components/ExternalImage";
+import { I18n } from "components/I18n";
 import { useAuthContext } from "providers/Auth/hooks";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import type { DataChannelService } from "services/DataChannel";
@@ -81,7 +82,7 @@ export const Chat = ({
           onKeyDown={onInputKeyDown}
         />
         <Button color="primary" onPress={onSendPress}>
-          Send
+          <I18n id="chat.sendButton" />
         </Button>
       </div>
     </>

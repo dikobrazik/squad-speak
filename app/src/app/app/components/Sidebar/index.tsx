@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getRooms } from "api";
 import { EmptyAvatar } from "components/EmptyAvatar";
 import { ExternalImage } from "components/ExternalImage";
+import { I18n } from "components/I18n";
 import { useProfile } from "hooks/useProfile";
 import ms from "ms";
 import { useAuthContext } from "providers/Auth/hooks";
@@ -28,7 +29,9 @@ export const Sidebar = ({ className }: { className?: string }) => {
     <aside className={cn(className, "flex h-full flex-col border-r")}>
       <div className="flex flex-col flex-1 overflow-hidden p-4">
         <CreateRoomModal />
-        <h2 className="w-full text-xl font-bold mb-4">Rooms</h2>
+        <h2 className="w-full text-xl font-bold mb-4">
+          <I18n id="sidebar.rooms" />
+        </h2>
         <div className="w-full flex-1 flex flex-col overflow-y-auto styled-scrollbar">
           {data?.map((room) => (
             <RoomLink room={room} key={room.id} />

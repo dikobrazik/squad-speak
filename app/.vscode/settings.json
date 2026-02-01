@@ -9,5 +9,16 @@
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
-  }
+  },
+  "i18n-ally.localesPaths": [
+    "src/messages"
+  ],
+  "i18n-ally.keystyle": "nested",
+  "i18n-ally.namespace": true,
+  "i18n-ally.pathMatcher": "{locale}.json",
+  "i18n-ally.sourceLanguage": "ru",
+  "i18n-ally.displayLanguage": "ru",
+  "i18n-ally.extract.autoDetect": true,
+  "i18n-ally.extract.keygenStyle": "default",
+  "i18n-ally.editor.preferEditor": true,
 }

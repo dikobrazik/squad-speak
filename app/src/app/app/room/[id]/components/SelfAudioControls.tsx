@@ -1,6 +1,7 @@
 import { Button } from "@heroui/button";
 import { Listbox, ListboxItem } from "@heroui/listbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
+import { I18n } from "components/I18n";
 import { Icon } from "components/Icon";
 import { useDevicesList } from "hooks/useDevicesList";
 import { useAuthContext } from "providers/Auth/hooks";
@@ -82,7 +83,7 @@ export const SelfAudioControls = ({
           >
             {inputDevices.map((device) => (
               <ListboxItem key={device.deviceId}>
-                {device.label || "Unnamed Device"}
+                {device.label || <I18n id="devices.audioInput.unknownDevice" />}
               </ListboxItem>
             ))}
           </Listbox>

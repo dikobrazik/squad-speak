@@ -3,6 +3,7 @@
 import { Button } from "@heroui/button";
 import { useMutation } from "@tanstack/react-query";
 import { authorizeDevice } from "api";
+import { I18n } from "components/I18n";
 import { LoadingPage } from "components/LoadingPage";
 import { redirect, useSearchParams } from "next/navigation";
 
@@ -46,10 +47,10 @@ export default function AddDevicePage() {
     return (
       <div className="flex flex-col h-screen justify-center items-center">
         <h2 className="text-center text-xl text-white">
-          Device authorized successfully!
+          <I18n id="addDevice.successMessage" />
         </h2>
         <h2 className="mt-4 text-center text-lg text-gray-300">
-          You can now close this window.
+          <I18n id="addDevice.successSubMessage" />
         </h2>
       </div>
     );
@@ -59,14 +60,14 @@ export default function AddDevicePage() {
     <div className="flex flex-col h-screen justify-between items-center">
       <div></div>
       <h2 className="text-center text-xl text-white">
-        Allow this device to access your account?
+        <I18n id="addDevice.promptMessage" />
       </h2>
       <div className="w-full p-5 mt-3 flex  gap-4">
         <Button fullWidth color="primary" onPress={onAllowPress} size="lg">
-          Allow
+          <I18n id="addDevice.allowButton" />
         </Button>
         <Button fullWidth color="danger" onPress={onDenyPress} size="lg">
-          Deny
+          <I18n id="addDevice.denyButton" />
         </Button>
       </div>
     </div>

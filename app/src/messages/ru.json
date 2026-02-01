@@ -1,0 +1,59 @@
+{
+  "landingPage": {
+    "enter": "Войти в SquadSpeak",
+    "heading": "<span>новый опыт</span><br></br>общения<br></br>с <span>твоими</span> тимейтам",
+    "section1Heading": "Голосового чат для геймеров, созданное для улучшения командной работы и общения.",
+    "section2Heading": "Голосового чат для геймеров, созданное для улучшения командной работы и общения.",
+    "section3Heading": "Голосового чат для геймеров, созданное для улучшения командной работы и общения."
+  },
+  "addDevice": {
+    "successMessage": "Устройство успешно добавлено!",
+    "successSubMessage": "Можешь закрыть страницу.",
+    "promptMessage": "Разрешить вход на этом устройстве?",
+    "allowButton": "Разрешить",
+    "denyButton": "Запретить"
+  },
+  "notFound": {
+    "title": "Не найдено",
+    "message": "Страница которую ты пытаешься открыть не найдена",
+    "returnHome": "Вернуться на главную"
+  },
+  "sidebar": {
+    "rooms": "Комнаты",
+    "create-room-button": "Создать комнату"
+  },
+  "createRoomModal": {
+    "create-room-header": "Создать комнату",
+    "room-name-placeholder": "Название",
+    "room-password-placeholder": "Пароль",
+    "cancel-button": "Отмена",
+    "create-button": "Создать",
+    "roomCreatedToast": {
+      "title": "Комната создана",
+      "description": "Комната \"{name}\" создана успешно."
+    }
+  },
+  "devices": {
+    "audioInput": {
+      "unknownDevice": "Безымяное устройство"
+    }
+  },
+  "chat": {
+    "sendButton": "Отправить"
+  },
+  "settings": {
+    "profile": "Профиль",
+    "audio": "Звук",
+    "activeSessions": "Активные сессии",
+    "sessions": {
+      "deviceId": "id устройства",
+      "createdAt": "Дата создания",
+      "lastActiveAt": "Последняя активность"
+    },
+    "audio-title": "Настройки звука",
+    "audio-systemSounds": "системные звуки",
+    "audio-noDevices": "Устройства не найдены",
+    "audio-inputDevice": "Устройство ввода",
+    "audio-outputDevice": "Устройство вывода"
+  }
+}

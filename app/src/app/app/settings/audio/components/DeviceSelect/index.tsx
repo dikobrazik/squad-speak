@@ -1,7 +1,8 @@
 import { Select, SelectItem } from "@heroui/select";
 import type { SharedSelection } from "@heroui/system";
+import { I18n } from "components/I18n";
 import { useDevicesList } from "hooks/useDevicesList";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 export const DeviceSelect = ({
   label,
@@ -9,7 +10,7 @@ export const DeviceSelect = ({
   defaultDeviceId,
   onDeviceChange,
 }: {
-  label: string;
+  label: ReactNode;
   kind: "audioinput" | "audiooutput";
   defaultDeviceId: string | null;
   onDeviceChange: (deviceId: string) => void;
@@ -39,7 +40,9 @@ export const DeviceSelect = ({
   };
 
   return devices.length === 0 ? (
-    <p>No output devices found.</p>
+    <p>
+      <I18n id="settings.audio-noDevices" />
+    </p>
   ) : (
     <Select
       label={label}

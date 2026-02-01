@@ -1,0 +1,32 @@
+{
+  "createRoomModal": {
+    "create-button": "Create",
+    "roomCreatedToast": {
+      "title": "Room Created",
+      "description": "Room \"{name}\" created successfully."
+    }
+  },
+  "devices": {
+    "audioInput": {
+      "unknownDevice": "Unnamed Device"
+    }
+  },
+  "chat": {
+    "sendButton": "Send"
+  },
+  "settings": {
+    "profile": "Profile",
+    "audio": "Audio",
+    "activeSessions": "Active sessions",
+    "sessions": {
+      "deviceId": "device id",
+      "createdAt": "Created date",
+      "lastActiveAt": "Last activity"
+    },
+    "audio-title": "Sound settings",
+    "audio-systemSounds": "system sounds",
+    "audio-noDevices": "No devices found",
+    "audio-inputDevice": "Input device",
+    "audio-outputDevice": "Output device"
+  }
+}

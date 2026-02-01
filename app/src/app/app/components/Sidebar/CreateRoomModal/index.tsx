@@ -11,8 +11,11 @@ import { Form } from "@heroui/react";
 import { addToast } from "@heroui/toast";
 import { useMutation } from "@tanstack/react-query";
 import { createRoom } from "api";
+import { I18n } from "components/I18n";
+import { useTranslations } from "next-intl";
 
 export const CreateRoomModal = () => {
+  const t = useTranslations();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const { mutateAsync: mutateRoom, isPending } = useMutation({
@@ -20,8 +23,13 @@ export const CreateRoomModal = () => {
     mutationFn: createRoom,
     onSuccess: (response) => {
       addToast({
-        title: "Room Created",
-        description: `Room "${response.name}" created successfully.`,
+        title: <I18n id="createRoomModal.roomCreatedToast.title" />,
+        description: (
+          <I18n
+            id="createRoomModal.roomCreatedToast.description"
+            params={{ name: response.name }}
+          />
+        ),
         color: "success",
       });
     },
@@ -44,19 +52,21 @@ export const CreateRoomModal = () => {
   return (
     <>
       <Button color="primary" className="mb-2" onPress={onOpen}>
-        Create Room
+        <I18n id="sidebar.create-room-button" />
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>Create Room</ModalHeader>
+              <ModalHeader>
+                <I18n id="createRoomModal.create-room-header" />
+              </ModalHeader>
               <ModalBody>
                 <Form onSubmit={onFormSubmit}>
                   <Input
                     isRequired
                     disabled={isPending}
-                    placeholder="Name"
+                    placeholder={t("createRoomModal.room-name-placeholder")}
                     name="name"
                     type="text"
                     autoComplete="off"
@@ -64,7 +74,7 @@ export const CreateRoomModal = () => {
                   />
                   <Input
                     disabled={isPending}
-                    placeholder="Password"
+                    placeholder={t("createRoomModal.room-password-placeholder")}
                     name="password"
                     type="password"
                     autoComplete="off"
@@ -77,10 +87,10 @@ export const CreateRoomModal = () => {
                       color="secondary"
                       onPress={onClose}
                     >
-                      Cancel
+                      <I18n id="createRoomModal.cancel-button" />
                     </Button>
                     <Button disabled={isPending} type="submit" color="primary">
-                      Create
+                      <I18n id="createRoomModal.create-button" />
                     </Button>
                   </div>
                 </Form>

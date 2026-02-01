@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { HeroProvider } from "../providers/Hero";
 import "./globals.css";
+import { NextIntlClientProvider } from "next-intl";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,7 +58,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <HeroProvider>
-          <main className="light text-foreground min-h-screen">{children}</main>
+          <NextIntlClientProvider>
+            <main className="light text-foreground min-h-screen">
+              {children}
+            </main>
+          </NextIntlClientProvider>
         </HeroProvider>
       </body>
     </html>
