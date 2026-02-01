@@ -15,11 +15,16 @@ export class TelegramBotService {
   private botToken: string;
 
   constructor(private readonly configService: ConfigService) {
-    this.botToken = this.configService.getOrThrow<string>('TELEGRAM_BOT_TOKEN');
+    const botToken = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
 
-    this.bot = new Telegraf(
-      this.configService.getOrThrow<string>('TELEGRAM_BOT_TOKEN'),
-    );
+    if (!botToken) {
+      throw new Error(
+        'TELEGRAM_BOT_TOKEN is not defined in environment variables',
+      );
+    }
+
+    this.botToken = botToken;
+    this.bot = new Telegraf(botToken);
   }
 
   createBot() {
@@ -74,8 +79,16 @@ export class TelegramBotService {
       return ctx.reply('✅ Вход выполнен. Можешь закрыть Telegram.');
     });
 
+    const webhookUrl = this.configService.get<string>('TELEGRAM_WEBHOOK_URL');
+
+    if (!webhookUrl) {
+      throw new Error(
+        'TELEGRAM_WEBHOOK_URL is not defined in environment variables',
+      );
+    }
+
     return this.bot.createWebhook({
-      domain: this.configService.getOrThrow<string>('TELEGRAM_WEBHOOK_URL'),
+      domain: webhookUrl,
     });
   }
 

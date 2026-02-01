@@ -31,7 +31,7 @@ import { UserModule } from './user/user.module';
       inject: [ConfigService],
       global: true,
       useFactory: (configService: ConfigService) => ({
-        secret: configService.getOrThrow('JWT_SECRET'),
+        secret: configService.get('JWT_SECRET'),
       }),
     }),
     TypeOrmModule.forRootAsync({

@@ -42,9 +42,7 @@ export class AuthorizationController {
   @Get('qr')
   createQr() {
     const sessionId = this.telegramAuthSessionService.createSession();
-    const botUsername = this.configService.getOrThrow<string>(
-      'TELEGRAM_BOT_USERNAME',
-    );
+    const botUsername = this.configService.get<string>('TELEGRAM_BOT_USERNAME');
 
     return {
       sessionId,
