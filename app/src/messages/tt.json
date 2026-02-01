@@ -1,0 +1,59 @@
+{
+  "addDevice": {
+    "allowButton": "Рөхсәт итегез",
+    "denyButton": "Тый",
+    "promptMessage": "Бу җайланмага керергә рөхсәт итегез?",
+    "successMessage": "Iceайланма уңышлы кушылды!",
+    "successSubMessage": "Сез битне япа аласыз."
+  },
+  "chat": {
+    "sendButton": "җибәр"
+  },
+  "createRoomModal": {
+    "cancel-button": "Баш тарту",
+    "create-button": "Ярат",
+    "create-room-header": "Бүлмә булдырыгыз",
+    "room-name-placeholder": "Исем",
+    "room-password-placeholder": "Серсүз",
+    "roomCreatedToast": {
+      "description": "\"{Name}\" бүлмәсе уңышлы ясалды.",
+      "title": "Бүлмә булдырылды"
+    }
+  },
+  "devices": {
+    "audioInput": {
+      "unknownDevice": "Исемсез җайланма"
+    }
+  },
+  "landingPage": {
+    "enter": "SquadSpeak-ка керегез",
+    "heading": "<span> яңа тәҗрибә </span> <br> </br> аралашу <br> </br> <span> сезнең </span> яшьтәшләрегез белән",
+    "section1Heading": "Команда белән аралашуны яхшырту өчен эшләнгән уенчылар өчен тавышлы чат.",
+    "section2Heading": "Команда белән аралашуны яхшырту өчен эшләнгән уенчылар өчен тавышлы чат.",
+    "section3Heading": "Команда белән аралашуны яхшырту өчен эшләнгән уенчылар өчен тавышлы чат."
+  },
+  "notFound": {
+    "message": "Сез ачарга тырышкан бит табылмады",
+    "returnHome": "Өйгә кайту",
+    "title": "Табылмады"
+  },
+  "settings": {
+    "activeSessions": "Актив сессияләр",
+    "audio": "Тавыш",
+    "audio-inputDevice": "Керү җайланмасы",
+    "audio-noDevices": "Җайланмалар табылмады",
+    "audio-outputDevice": "Чыгыш җайланмасы",
+    "audio-systemSounds": "система тавышлары",
+    "audio-title": "Тавыш көйләүләре",
+    "profile": "Профиль",
+    "sessions": {
+      "createdAt": "Ясалган дата",
+      "deviceId": "җайланма идентификаторы",
+      "lastActiveAt": "Соңгы эшчәнлек"
+    }
+  },
+  "sidebar": {
+    "create-room-button": "Бүлмә булдырыгыз",
+    "rooms": "Бүлмәләр"
+  }
+}

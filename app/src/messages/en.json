@@ -4,7 +4,11 @@
     "roomCreatedToast": {
       "title": "Room Created",
       "description": "Room \"{name}\" created successfully."
-    }
+    },
+    "cancel-button": "Cancel",
+    "create-room-header": "Create a room",
+    "room-name-placeholder": "Name",
+    "room-password-placeholder": "Password"
   },
   "devices": {
     "audioInput": {
@@ -28,5 +32,28 @@
     "audio-noDevices": "No devices found",
     "audio-inputDevice": "Input device",
     "audio-outputDevice": "Output device"
+  },
+  "addDevice": {
+    "allowButton": "Allow",
+    "denyButton": "Prohibit",
+    "promptMessage": "Allow login on this device?",
+    "successMessage": "Device added successfully!",
+    "successSubMessage": "You can close the page."
+  },
+  "landingPage": {
+    "enter": "Login to SquadSpeak",
+    "heading": "<span>new experience</span><br></br>communication<br></br>with <span>your</span> teammates",
+    "section1Heading": "Voice chat for gamers, designed to improve teamwork and communication.",
+    "section2Heading": "Voice chat for gamers, designed to improve teamwork and communication.",
+    "section3Heading": "Voice chat for gamers, designed to improve teamwork and communication."
+  },
+  "notFound": {
+    "message": "The page you are trying to open was not found",
+    "returnHome": "Return to home",
+    "title": "Not found"
+  },
+  "sidebar": {
+    "create-room-button": "Create a room",
+    "rooms": "Rooms"
   }
 }
