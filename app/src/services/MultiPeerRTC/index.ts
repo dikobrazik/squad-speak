@@ -59,22 +59,20 @@ export class MultiPeerRTC {
       return;
     }
 
-    for (const oldTrack of this.localStream.getAudioTracks()) {
-      for (const pc of this.peers.values()) {
-        if (pc.getSenders().length) {
-          const sender = pc
-            .getSenders()
-            .find((s) => s.track?.id === oldTrack.id);
+    const oldTrack = this.localStream.getAudioTracks()[0];
 
-          if (sender) {
-            sender.replaceTrack(newTrack);
-          }
-        } else {
-          pc.addTrack(newTrack, stream);
+    for (const pc of this.peers.values()) {
+      if (pc.getSenders().length) {
+        const sender = pc.getSenders().find((s) => s.track?.id === oldTrack.id);
+
+        if (sender) {
+          sender.replaceTrack(newTrack);
         }
+      } else {
+        pc.addTrack(newTrack, stream);
       }
-      oldTrack.stop();
     }
+    oldTrack.stop();
 
     this.localStream = stream;
   }
@@ -122,6 +120,8 @@ export class MultiPeerRTC {
     };
 
     pc.onconnectionstatechange = () => {
+      console.log("Connection state change", pc.connectionState, "for", userId);
+
       if (pc.connectionState === "failed" || pc.connectionState === "closed") {
         console.log(`Connection state ${pc.connectionState} for`, userId);
         this.closePeer(userId);
@@ -129,6 +129,7 @@ export class MultiPeerRTC {
     };
 
     pc.onsignalingstatechange = () => {
+      console.log("Signaling state change", pc.signalingState, "for", userId);
       if (pc.signalingState === "closed") {
         console.log("Signaling state closed for", userId);
         this.closePeer(userId);
