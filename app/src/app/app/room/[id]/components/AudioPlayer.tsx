@@ -1,52 +1,46 @@
 import { Slider } from "@heroui/slider";
 import { useEffect, useRef, useState } from "react";
 
-export const AudioPlayer = ({ stream }: { stream: MediaStream }) => {
+export const AudioPlayer = ({
+  stream,
+  muted,
+}: {
+  stream: MediaStream;
+  muted?: boolean;
+}) => {
   const [volume, setVolume] = useState(100);
-  const [gainNode, setGainNode] = useState<GainNode | null>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (audioRef.current && stream) {
-      const audioApi = new AudioContext();
-      const source = audioApi.createMediaStreamSource(stream);
-      const destination = audioApi.createMediaStreamDestination();
-      const gain = audioApi.createGain();
-      const compressor = audioApi.createDynamicsCompressor();
-      source.connect(compressor);
-      compressor.connect(gain);
-      gain.connect(destination);
-      audioRef.current.volume = 1;
-      audioRef.current.srcObject = destination.stream;
-
-      setGainNode(gain);
+    if (videoRef.current && stream) {
+      videoRef.current.srcObject = stream;
+      videoRef.current.volume = volume / 100;
     }
   }, [stream]);
 
   const onVolumeChange = (value: number | number[]) => {
-    if (audioRef.current && typeof value === "number") {
-      if (gainNode) {
-        gainNode.gain.value = value / 100;
-      }
+    if (videoRef.current && typeof value === "number") {
+      videoRef.current.volume = value / 100;
       setVolume(value);
     }
   };
 
   return (
     <div>
-      {/* biome-ignore lint/a11y/useMediaCaption: нечего выводить в субтитрах */}
-      <audio className="hidden" ref={audioRef} autoPlay playsInline controls />
+      <video
+        className="hidden"
+        ref={videoRef}
+        autoPlay
+        playsInline
+        controls
+        muted={muted}
+      />
       <Slider
         label="Volume"
         value={volume}
         className="max-w-md"
         minValue={0}
-        maxValue={200}
-        marks={[
-          { value: 0, label: "0" },
-          { value: 100, label: "100" },
-          { value: 200, label: "200" },
-        ]}
+        maxValue={100}
         onChange={onVolumeChange}
       />
     </div>
