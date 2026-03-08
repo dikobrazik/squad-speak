@@ -1,31 +1,50 @@
-# Base on offical Node.js Alpine image
-FROM node:22.21.1-alpine3.21
+ARG NODE_VERSION=24.14.1-alpine
 
-# Set working directory
+# ============================================
+# Stage 1: Install dependencies
+# ============================================
+
+FROM node:${NODE_VERSION} AS dependencies
+
 WORKDIR /usr/app
 
-# Copy package.json and package-lock.json before other files
-# Utilise Docker cache to save re-installing dependencies if unchanged
 COPY ./package*.json ./
 COPY ./app/package*.json ./app/
 
-# Install dependencies
-RUN npm install -w app
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci -w app --no-audit --no-fund
 
-# Copy all files
+# ============================================
+# Stage 2: Build Next.js application
+# ============================================
+
+FROM node:${NODE_VERSION} AS builder
+WORKDIR /usr/app
+COPY --from=dependencies /usr/app/node_modules ./node_modules
+# COPY --from=dependencies /usr/app/app/node_modules ./app/node_modules
 COPY ./app/.env ./app/.env
 COPY ./app ./app
 COPY ./shared ./shared
-
-# Build app
+COPY ./package*.json ./
 RUN npm run build -w app
 
-# Expose the listening port
-EXPOSE 3000
+# ============================================
+# Stage 3: Run Next.js application
+# ============================================
 
-# Run container as non-root (unprivileged) user
-# The node user is provided in the Node.js Alpine base image
+FROM node:${NODE_VERSION} AS runner
+
+WORKDIR /usr/app
+
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+COPY --from=builder --chown=node:node /usr/app/app/public ./public
+RUN mkdir .next
+RUN chown node:node .next
+COPY --from=builder --chown=node:node /usr/app/app/.next/standalone ./
+COPY --from=builder --chown=node:node /usr/app/app/.next/static ./.next/static
 USER node:1001
 
-# Run npm start script when container starts
-CMD [ "npm", "start", "-w", "app" ]
+EXPOSE 3000
+CMD ["node", "app/server.js"]

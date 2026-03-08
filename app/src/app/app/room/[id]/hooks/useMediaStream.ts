@@ -11,10 +11,16 @@ export const useMediaStream = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: false,
-        audio: {
-          deviceId,
-        },
+        audio: deviceId
+          ? {
+              deviceId,
+            }
+          : true,
       });
+
+      if (deviceId !== undefined && stream.getAudioTracks().length === 0) {
+        return initializeMediaStream(undefined);
+      }
 
       setMediaStream(stream);
     } catch (e) {

@@ -3,7 +3,7 @@ name: Build & Push Nginx
 on:
     push:
         branches: ['main']
-        paths: ['.github/workflows/build-nginx.yaml', 'deploy/nginx/**', 'deploy/docker-compose.yaml']
+        paths: ['.github/workflows/build-nginx.yaml', 'deploy/nginx/**']
     workflow_dispatch:
 
 env:

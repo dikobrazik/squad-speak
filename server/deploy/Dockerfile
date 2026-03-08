@@ -1,22 +1,54 @@
-# Base image
-FROM node:20.18.0-alpine
+ARG NODE_VERSION=24.14.1-alpine
 
-# Create app directory
-WORKDIR /usr/src/app
+# ============================================
+# Stage 1: Install dependencies
+# ============================================
 
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY ./server/package*.json ./server/
+FROM node:${NODE_VERSION} AS builddeps
+WORKDIR /usr/app
 COPY ./package*.json ./
+COPY ./server/package*.json ./server/
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci -w server --no-audit --no-fund
 
-# Install app dependencies
-RUN npm install -w server
+# ============================================
+# Stage 1: Install production dependencies
+# ============================================
+FROM node:${NODE_VERSION} AS dependencies
+ENV NODE_ENV=production
+WORKDIR /usr/app
+COPY ./package*.json ./
+COPY ./server/package*.json ./server/
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci -w server --no-audit --no-fund
+  
+# ============================================
+# Stage 2: Build Nest.js application
+# ============================================
 
-# Bundle app source
+FROM node:${NODE_VERSION} AS builder
+WORKDIR /usr/app
+COPY --from=builddeps /usr/app/node_modules ./node_modules
+# COPY --from=builddeps /usr/app/server/node_modules ./server/node_modules
 COPY ./server ./server
 COPY ./shared ./shared
-
-# Creates a "dist" folder with the production build
+COPY ./package*.json ./
 RUN npm run build -w server
 
-# Start the server using the production build
-CMD ["npm", "run", "start:prod", "-w", "server"]
+
+# ============================================
+# Stage 3: Run Nest.js application
+# ============================================
+
+FROM node:${NODE_VERSION} AS runner
+
+WORKDIR /usr/app
+
+ENV NODE_ENV=production
+COPY --from=dependencies --chown=node:node /usr/app/node_modules ./node_modules
+COPY --from=builder --chown=node:node /usr/app/server/dist ./dist
+# COPY --from=dependencies --chown=node:node /usr/app/server/node_modules ./dist/node_modules
+USER node:1001
+
+EXPOSE 80
+CMD ["node", "dist/server/src/main.js"]

@@ -1,6 +1,9 @@
 name: Deploy All Services
 
 on:
+  push:
+    branches: ['main']
+    paths: ['.github/workflows/deploy.yaml', 'deploy/docker-compose.yaml', 'deploy/scripts/**']
   workflow_dispatch:
   workflow_run:
     workflows:
@@ -16,14 +19,14 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' || github.event_name == 'push' }}
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Copy docker-compose
+      - name: Copy deploy files to remote server using SSH
         uses: appleboy/scp-action@master
         with:
             host: ${{ secrets.SSH_HOST }}
@@ -31,29 +34,21 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             strip_components: 1
             source: 'deploy/docker-compose.yaml'
-            target: '~/squad-speak/deploy'
-
-      - name: echo env file to remote server
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            echo "${{ secrets.ENV_DOCKER }}" > ~/squad-speak/deploy/.env
-            echo "${{ secrets.ENV_FRONTEND }}" > ~/squad-speak/deploy/frontend.env
-            echo "${{ secrets.ENV_BACKEND }}" > ~/squad-speak/deploy/backend.env
+            target: '/home/actions/squad-speak'
 
       - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v1.0.0
+        uses: appleboy/ssh-action@v1.2.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER: ${{ github.actor }}
+          ENV_DOCKER: ${{ secrets.ENV_DOCKER }}
+          ENV_FRONTEND: ${{ secrets.ENV_FRONTEND }}
+          ENV_BACKEND: ${{ secrets.ENV_BACKEND }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          script: |
-            cd ~/squad-speak &&
-            docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io &&
-            docker compose -f deploy/docker-compose.yaml stop && 
-            docker compose -f deploy/docker-compose.yaml pull && 
-            docker compose -f deploy/docker-compose.yaml up -d &&
-            docker system prune -f
+          envs: GITHUB_TOKEN,GITHUB_USER,ENV_DOCKER,ENV_FRONTEND,ENV_BACKEND
+          script_path: ./deploy/scripts/deploy.sh
+
+

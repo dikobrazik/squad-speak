@@ -3,7 +3,7 @@ name: Build & Push Frontend
 on:
     push:
         branches: ['main']
-        paths: ['.github/workflows/build-frontend.yaml', 'deploy/docker-compose.yaml', 'app/**']
+        paths: ['.github/workflows/build-frontend.yaml', 'app/**']
     workflow_dispatch:
 
 env:
