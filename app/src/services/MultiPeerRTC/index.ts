@@ -34,13 +34,13 @@ export class MultiPeerRTC {
   addAudioTrack(stream: MediaStream) {
     if (this.localStream) return;
 
-    this.localStream = stream;
-
     const audioTrack = stream.getAudioTracks()[0];
     if (!audioTrack) {
       console.warn("No audio track in the provided stream");
       return;
     }
+
+    this.localStream = stream;
 
     for (const pc of this.peers.values()) {
       pc.addTrack(audioTrack, stream);
@@ -62,17 +62,16 @@ export class MultiPeerRTC {
     const oldTrack = this.localStream.getAudioTracks()[0];
 
     for (const pc of this.peers.values()) {
-      if (pc.getSenders().length) {
-        const sender = pc.getSenders().find((s) => s.track?.id === oldTrack.id);
+      const sender = pc.getSenders().find((s) => s.track?.id === oldTrack?.id);
 
-        if (sender) {
-          sender.replaceTrack(newTrack);
-        }
+      if (sender) {
+        sender.replaceTrack(newTrack);
       } else {
         pc.addTrack(newTrack, stream);
       }
     }
-    oldTrack.stop();
+
+    oldTrack?.stop();
 
     this.localStream = stream;
   }
